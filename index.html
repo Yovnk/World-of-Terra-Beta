@@ -35,7 +35,7 @@ button.secondary{background:#000;border:1px solid #ffae33;color:#ffae33}
 <body>
 <div id="mainMenu" class="screen"><div class="card"><h1 style="color:#ffae33;text-align:center">WORLD OF TERRA</h1><p style="text-align:center;color:#aaa;font-size:11px">BETA - NEZHAL</p><div id="slotArea"></div><div class="preview"><canvas id="menuPreview" width="120" height="120"></canvas></div><button id="btnStart" onclick="startAdventure()">INICIAR PARTIDA</button><button class="secondary" onclick="openCharCreate()">CREAR PERSONAJE</button></div></div>
 <div id="charCreate" class="screen" style="display:none"><div class="card"><h3 style="color:#ffae33;text-align:center">CREA TU LEYENDA</h3><div class="preview"><canvas id="charCanvas" width="120" height="120"></canvas></div><input id="c_name" placeholder="Nombre" maxlength="12"><div class="label">GÉNERO</div><div class="row"><div class="opt active" id="g_m" onclick="setG('m')">♂ Hombre</div><div class="opt" id="g_f" onclick="setG('f')">♀ Mujer</div></div><div class="label">CLASE</div><div class="row"><div class="opt active" id="c_war" onclick="setC('warrior')">⚔️ Guardián</div><div class="opt" id="c_arc" onclick="setC('archer')">🏹 Explorador</div></div><div class="row"><div class="opt" id="c_mag" onclick="setC('mage')">🔮 Hechicero</div><div class="opt" id="c_pri" onclick="setC('priest')">✨ Luminari</div></div><button onclick="createChar()">GUARDAR</button><button class="secondary" onclick="closeCharCreate()">VOLVER</button></div></div>
-<div id="gameWrap"><canvas id="game"></canvas><div id="uiTop"><div><b id="pName"></b> <span id="pClass"></span> Lv<span id="pLv">1</span><br><div class="bar"><div id="hpFill" class="fill" style="background:#f44;width:100%"></div></div><div class="bar"><div id="xpFill" class="fill" style="background:#ffae33;width:10%"></div></div></div><div style="text-align:right"><div id="invBtn" onclick="toggleInv()" style="position:relative;top:0;right:0;display:inline-block">🎒 INV</div><br><span id="spriteInfo" style="font-size:13px;color:#ffae33;font-weight:bold">cc x:0 y:0</span><br><span id="posTxt" style="display:none"></span><br>💰 <span id="goldTxt">0</span></div></div><div id="invBtn" style="display:none"></div><div id="inv"><b>INVENTARIO</b><div id="invList"></div><button class="secondary" style="margin-top:8px" onclick="goMenu()">🏠 MENU</button></div><div id="hotbar"><div class="skill" onclick="usePotion()">💊</div><div class="skill" onclick="addRandomItem()">🎁</div><div class="skill" onclick="toggleCollisionDebug()">🧱</div></div><div id="joy"><div id="stick"></div></div><div id="msgBox"></div></div>
+<div id="gameWrap"><canvas id="game"></canvas><div id="uiTop"><div><b id="pName"></b> <span id="pClass"></span> Lv<span id="pLv">1</span><br><div class="bar"><div id="hpFill" class="fill" style="background:#f44;width:100%"></div></div><div class="bar"><div id="xpFill" class="fill" style="background:#ffae33;width:10%"></div></div></div><div style="text-align:right"><div id="invBtn" onclick="toggleInv()" style="position:relative;top:0;right:0;display:inline-block">🎒 INV</div><br><span id="spriteInfo" style="font-size:13px;color:#ffae33;font-weight:bold">cc x:0 y:0</span><br>💰 <span id="goldTxt">0</span></div></div><div id="inv"><b>INVENTARIO</b><div id="invList"></div><button class="secondary" style="margin-top:8px" onclick="goMenu()">🏠 MENU</button></div><div id="hotbar"><div class="skill" onclick="usePotion()">💊</div><div class="skill" onclick="addRandomItem()">🎁</div><div class="skill" onclick="toggleCollisionDebug()">🧱</div></div><div id="joy"><div id="stick"></div></div><div id="msgBox"></div></div>
 <script>
 let gender='m',pClass='warrior';
 const classes={warrior:{name:'Guardián',icon:'⚔️'},archer:{name:'Explorador',icon:'🏹'},mage:{name:'Hechicero',icon:'🔮'},priest:{name:'Luminari',icon:'✨'}};
@@ -54,19 +54,13 @@ function startAdventure(){let ch=getSavedChar();if(!ch){openCharCreate();return;
 function goMenu(){if(player){saveChar({...player});}gameWrap.style.display='none';mainMenu.style.display='flex';drawMenuPreview();}
 function toggleInv(){let i=document.getElementById('inv');i.style.display=i.style.display==='block'?'none':'block';updateInvUI();}
 function showMsg(t){let m=document.getElementById('msgBox');m.innerText=t;m.style.display='block';setTimeout(()=>m.style.display='none',2000);}
-
 const TILE=32, MAP_W=80, MAP_H=80;
 let nezhalMapImg=new Image(), nezhalMapLoaded=false;
-let mapAttempts=['./nezhal.png','./nerzhal.png','./Nezhal.png','./Nerzhal.png','./map.png'];
+let mapAttempts=['./nezhal.png','./nerzhal.png','./Nezhal.png','./Nerzhal.png','./map.png','./nezhal.jpg'];
 let mapIdx=0;
-nezhalMapImg.onload=()=>{nezhalMapLoaded=true;buildCollision();document.getElementById('spriteInfo').innerText='cc x:22 y:32';};
-nezhalMapImg.onerror=()=>{
-  mapIdx++;
-  if(mapIdx < mapAttempts.length){nezhalMapImg.src = mapAttempts[mapIdx];}
-  else{buildCollision();}
-};
+nezhalMapImg.onload=()=>{nezhalMapLoaded=true;buildCollision();};
+nezhalMapImg.onerror=()=>{mapIdx++;if(mapIdx < mapAttempts.length){nezhalMapImg.src = mapAttempts[mapIdx];}else{buildCollision();}};
 nezhalMapImg.src=mapAttempts[0];
-
 const ITEMS={potion:{name:'Poción',icon:'🧪'},coin:{name:'Moneda',icon:'💰'},wood:{name:'Madera',icon:'🪵'},diamond:{name:'Diamante',icon:'💎'}};
 function getItem(id){return ITEMS[id]||{name:'???',icon:'❓'};}
 let COLLISION_MAP=[], showCollision=false;
@@ -76,51 +70,64 @@ function buildCollision(){
   for(let y=0;y<MAP_H;y++){COLLISION_MAP[y]=[];for(let x=0;x<MAP_W;x++)COLLISION_MAP[y][x]=0;}
   function wall(x1,y1,x2,y2){for(let y=Math.min(y1,y2); y<=Math.max(y1,y2); y++){for(let x=Math.min(x1,x2); x<=Math.max(x1,x2); x++){if(y>=0&&y<MAP_H&&x>=0&&x<MAP_W) COLLISION_MAP[y][x]=1;}}}
   function free(x1,y1,x2,y2){for(let y=Math.min(y1,y2); y<=Math.max(y1,y2); y++){for(let x=Math.min(x1,x2); x<=Math.max(x1,x2); x++){if(y>=0&&y<MAP_H&&x>=0&&x<MAP_W) COLLISION_MAP[y][x]=0;}}}
-  
-  // BORDES EXTERIORES
-  wall(0,0,79,2); wall(0,77,79,79); wall(0,0,2,79); wall(77,0,79,79);
-  
-  // MURO IZQUIERDO - original perfecto
-  wall(6,0,10,79);
 
-  // MURO SUPERIOR - bajado 1 y de esquina a esquina como pediste
-  wall(10,11,79,12);
-  
-  // LIBERAR SPAWN Y CAMINO DE LA CASA
-  free(20,28,24,75);
-  free(34,70,45,79);
+  // BORDES
+  wall(0,0,79,2); wall(0,77,79,79); wall(0,0,2,79); wall(77,0,79,79);
+  wall(6,0,10,79); wall(70,0,74,79); wall(6,8,74,12);
+
+  // TUS MUROS
+  wall(68,0,68,79);
+  wall(45,13,48,13); wall(45,13,45,18); wall(35,17,43,17); wall(34,18,34,18);
+  wall(33,13,33,18); wall(31,13,33,13); wall(30,13,30,13);
+  wall(46,68,68,68); wall(42,67,46,67); wall(42,67,42,71);
+  wall(36,67,36,71); wall(33,67,36,67); wall(11,68,33,68);
+
+  // CALLES LIBRES
+  free(34,11,45,79); free(6,40,70,46); free(6,42,10,48); free(38,12,42,15);
+  free(20,28,24,75); free(37,67,41,68); free(34,70,45,79);
+
+  // CASTILLO
+  wall(30,3,38,11); wall(46,3,54,11); wall(39,3,45,6);
+  free(38,12,42,15);
+
+  // CASA ROJA - PORCHE LIBRE
+  wall(14,21,28,30);
+  free(20,30,20,31); // puerta
+  free(19,30,21,32); // porche
+
+  // CASA AZUL
+  wall(49,27,65,36);
+  wall(50,37,53,40); wall(61,37,64,40);
+  wall(65,37,66,39); // barril
+  free(55,36,58,38);
+
+  // CASA VERDE
+  wall(18,53,30,62);
+  wall(28,54,29,56); // barril
+  free(23,62,24,64);
+
+  // CASA MARRON
+  wall(49,53,65,64);
+  wall(66,62,67,64);
+  free(55,64,56,66);
+
+  // OBJETOS - PIEDRAS, FUENTE, BARRILES
+  wall(11,61,16,66); // fuente
+  wall(9,50,14,54); // roca izq medio
+  wall(9,68,14,71); // roca izq abajo
+  wall(32,66,36,70); // roca centro abajo
+  wall(66,16,70,20); // piedra arriba der
+  wall(69,29,72,32); // piedra der
+  wall(67,51,70,54); // piedra abajo der
+  wall(13,25,14,28); // cosas casa roja
 }
 
 const SPRITES={};
-function addSprite(id,url,cols=6,rows=2){
-  const img=new Image();
-  const e={img,url,cols,rows,loaded:false,fw:0,fh:0,rawW:0,rawH:0};
-  SPRITES[id]=e;
-  img.onload=()=>{e.loaded=true;e.rawW=img.width/cols;e.rawH=img.height/rows;e.fw=Math.floor(e.rawW-2);e.fh=Math.floor(e.rawH-2);};
-  img.src=url;
-}
+function addSprite(id,url,cols=6,rows=2){const img=new Image();const e={img,url,cols,rows,loaded:false,fw:0,fh:0,rawW:0,rawH:0};SPRITES[id]=e;img.onload=()=>{e.loaded=true;e.rawW=img.width/cols;e.rawH=img.height/rows;e.fw=Math.floor(e.rawW-2);e.fh=Math.floor(e.rawH-2);};img.src=url;}
 addSprite('man','./man.png',6,2);
 addSprite('women','./women.png',6,2);
-
-function getFrame(dir, moving, tick){
-  let row, col;
-  let walk = Math.floor(tick/4)%2;
-  if(dir===0){row=0; if(!moving) col=1; else col = walk===0 ? 0 : 2;}
-  else if(dir===3){row=0; if(!moving) col=4; else col = walk===0 ? 3 : 5;}
-  else if(dir===1){row=1; if(!moving) col=0; else col = walk===0 ? 1 : 2;}
-  else{row=1; if(!moving) col=3; else col = walk===0 ? 4 : 5;}
-  return {row,col};
-}
-function drawPlayer(ctx,spr,dir,moving,tick,dx,dy,dw,dh){
-  if(!spr||!spr.loaded) return false;
-  let fr = getFrame(dir,moving,tick);
-  try{
-    let sx = fr.col * spr.rawW + 1;
-    let sy = fr.row * spr.rawH + 1;
-    ctx.drawImage(spr.img, sx, sy, spr.fw, spr.fh, dx, dy, dw, dh);
-    return true;
-  }catch(e){return false;}
-}
+function getFrame(dir, moving, tick){let row, col;let walk = Math.floor(tick/4)%2;if(dir===0){row=0; if(!moving) col=1; else col = walk===0 ? 0 : 2;}else if(dir===3){row=0; if(!moving) col=4; else col = walk===0 ? 3 : 5;}else if(dir===1){row=1; if(!moving) col=0; else col = walk===0 ? 1 : 2;}else{row=1; if(!moving) col=3; else col = walk===0 ? 4 : 5;}return {row,col};}
+function drawPlayer(ctx,spr,dir,moving,tick,dx,dy,dw,dh){if(!spr||!spr.loaded) return false;let fr = getFrame(dir,moving,tick);try{let sx = fr.col * spr.rawW + 1;let sy = fr.row * spr.rawH + 1;ctx.drawImage(spr.img, sx, sy, spr.fw, spr.fh, dx, dy, dw, dh);return true;}catch(e){return false;}}
 let player,drops=[],keys={},joyX=0,joyY=0,joyActive=false,anim=0;
 function startGame(charData){
 let c=document.getElementById('game'),ctx=c.getContext('2d');
