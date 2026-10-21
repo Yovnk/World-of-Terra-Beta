@@ -57,16 +57,20 @@ function showMsg(t){let m=document.getElementById('msgBox');m.innerText=t;m.styl
 
 const TILE=32, MAP_W=80, MAP_H=80;
 let nezhalMapImg=new Image(), nezhalMapLoaded=false;
+let mapAttempts=['./nezhal.png','./nerzhal.png','./Nezhal.png','./Nerzhal.png','./map.png'];
+let mapIdx=0;
 nezhalMapImg.onload=()=>{nezhalMapLoaded=true;buildCollision();document.getElementById('spriteInfo').innerText='Mapa OK';};
 nezhalMapImg.onerror=()=>{
-  if(nezhalMapImg.src.includes('nezhal.png')){
-    nezhalMapImg.src='./Nezhal.png';
+  mapIdx++;
+  if(mapIdx < mapAttempts.length){
+    nezhalMapImg.src = mapAttempts[mapIdx];
   }else{
-    document.getElementById('spriteInfo').innerText='Mapa no encontrado - revisa nombre';
+    document.getElementById('spriteInfo').innerText='Mapa no encontrado';
     buildCollision();
   }
 };
-nezhalMapImg.src='./nezhal.png';
+nezhalMapImg.src=mapAttempts[0];
+
 const ITEMS={potion:{name:'Poción',icon:'🧪'},coin:{name:'Moneda',icon:'💰'},wood:{name:'Madera',icon:'🪵'},diamond:{name:'Diamante',icon:'💎'}};
 function getItem(id){return ITEMS[id]||{name:'???',icon:'❓'};}
 let COLLISION_MAP=[], showCollision=false;
@@ -97,36 +101,26 @@ function addSprite(id,url,cols=6,rows=2){
 addSprite('man','./man.png',6,2);
 addSprite('women','./women.png',6,2);
 
+// FIX: Caminar sin mostrar frame parado
 function getFrame(dir, moving, tick){
   let row, col;
-  if(dir===0){ // ABAJO 1-2-3
+  let walk = Math.floor(tick/4)%2;
+  if(dir===0){
     row=0;
     if(!moving) col=1;
-    else{
-      let f = Math.floor(tick/4)%3;
-      col = f===0?0:f===1?1:2;
-    }
-  }else if(dir===3){ // ARRIBA 4-5-6
+    else col = walk===0 ? 0 : 2;
+  }else if(dir===3){
     row=0;
     if(!moving) col=4;
-    else{
-      let f = Math.floor(tick/4)%3;
-      col = f===0?3:f===1?4:5;
-    }
-  }else if(dir===1){ // IZQ 7-8-9
+    else col = walk===0 ? 3 : 5;
+  }else if(dir===1){
     row=1;
     if(!moving) col=0;
-    else{
-      let f = Math.floor(tick/4)%3;
-      col = f===0?0:f===1?1:2;
-    }
-  }else{ // DER 10-11-12
+    else col = walk===0 ? 1 : 2;
+  }else{
     row=1;
     if(!moving) col=3;
-    else{
-      let f = Math.floor(tick/4)%3;
-      col = f===0?3:f===1?4:5;
-    }
+    else col = walk===0 ? 4 : 5;
   }
   return {row,col};
 }
