@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WORLD OF TERRA BETA - NEZHAL</title>
+<title>WORLD OF TERRA BETA</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:monospace;user-select:none}
 body{background:#000;overflow:hidden;touch-action:none}
@@ -35,7 +35,7 @@ button.secondary{background:#000;border:1px solid #ffae33;color:#ffae33}
 <body>
 <div id="mainMenu" class="screen"><div class="card"><h1 style="color:#ffae33;text-align:center">WORLD OF TERRA</h1><p style="text-align:center;color:#aaa;font-size:11px">BETA - NEZHAL</p><div id="slotArea"></div><div class="preview"><canvas id="menuPreview" width="120" height="120"></canvas></div><button id="btnStart" onclick="startAdventure()">INICIAR PARTIDA</button><button class="secondary" onclick="openCharCreate()">CREAR PERSONAJE</button></div></div>
 <div id="charCreate" class="screen" style="display:none"><div class="card"><h3 style="color:#ffae33;text-align:center">CREA TU LEYENDA</h3><div class="preview"><canvas id="charCanvas" width="120" height="120"></canvas></div><input id="c_name" placeholder="Nombre" maxlength="12"><div class="label">GÉNERO</div><div class="row"><div class="opt active" id="g_m" onclick="setG('m')">♂ Hombre</div><div class="opt" id="g_f" onclick="setG('f')">♀ Mujer</div></div><div class="label">CLASE</div><div class="row"><div class="opt active" id="c_war" onclick="setC('warrior')">⚔️ Guardián</div><div class="opt" id="c_arc" onclick="setC('archer')">🏹 Explorador</div></div><div class="row"><div class="opt" id="c_mag" onclick="setC('mage')">🔮 Hechicero</div><div class="opt" id="c_pri" onclick="setC('priest')">✨ Luminari</div></div><button onclick="createChar()">GUARDAR</button><button class="secondary" onclick="closeCharCreate()">VOLVER</button></div></div>
-<div id="gameWrap"><canvas id="game"></canvas><div id="uiTop"><div><b id="pName"></b> <span id="pClass"></span> Lv<span id="pLv">1</span><br><div class="bar"><div id="hpFill" class="fill" style="background:#f44;width:100%"></div></div><div class="bar"><div id="xpFill" class="fill" style="background:#ffae33;width:10%"></div></div><span>Nezhal</span></div><div style="text-align:right">💰 <span id="goldTxt">0</span><br><span id="posTxt"></span><br><span id="spriteInfo">OK</span></div></div><div id="invBtn" onclick="toggleInv()">🎒 INV</div><div id="inv"><b>INVENTARIO</b><div id="invList"></div><button class="secondary" style="margin-top:8px" onclick="goMenu()">🏠 MENU</button></div><div id="hotbar"><div class="skill" onclick="usePotion()">💊</div><div class="skill" onclick="addRandomItem()">🎁</div><div class="skill" onclick="toggleCollisionDebug()">🧱</div></div><div id="joy"><div id="stick"></div></div><div id="msgBox"></div></div>
+<div id="gameWrap"><canvas id="game"></canvas><div id="uiTop"><div><b id="pName"></b> <span id="pClass"></span> Lv<span id="pLv">1</span><br><div class="bar"><div id="hpFill" class="fill" style="background:#f44;width:100%"></div></div><div class="bar"><div id="xpFill" class="fill" style="background:#ffae33;width:10%"></div></div></div><div style="text-align:right">💰 <span id="goldTxt">0</span><br><span id="posTxt"></span><br><span id="spriteInfo"></span></div></div><div id="invBtn" onclick="toggleInv()">🎒 INV</div><div id="inv"><b>INVENTARIO</b><div id="invList"></div><button class="secondary" style="margin-top:8px" onclick="goMenu()">🏠 MENU</button></div><div id="hotbar"><div class="skill" onclick="usePotion()">💊</div><div class="skill" onclick="addRandomItem()">🎁</div><div class="skill" onclick="toggleCollisionDebug()">🧱</div></div><div id="joy"><div id="stick"></div></div><div id="msgBox"></div></div>
 <script>
 let gender='m',pClass='warrior';
 const classes={warrior:{name:'Guardián',icon:'⚔️'},archer:{name:'Explorador',icon:'🏹'},mage:{name:'Hechicero',icon:'🔮'},priest:{name:'Luminari',icon:'✨'}};
@@ -44,8 +44,8 @@ function getSavedChar(){try{return JSON.parse(localStorage.getItem(LS_KEY))}catc
 function saveChar(ch){localStorage.setItem(LS_KEY,JSON.stringify(ch));}
 function setG(g){gender=g;document.getElementById('g_m').classList.toggle('active',g==='m');document.getElementById('g_f').classList.toggle('active',g==='f');drawPreview();}
 function setC(c){pClass=c;document.querySelectorAll('[id^=c_]').forEach(e=>e.classList.remove('active'));let m={warrior:'war',archer:'arc',mage:'mag',priest:'pri'};document.getElementById('c_'+m[c]).classList.add('active');drawPreview();}
-function drawPreview(){let cv=document.getElementById('charCanvas'),x=cv.getContext('2d');if(!cv)return;x.clearRect(0,0,120,120);let spr=SPRITES[gender==='m'?'man':'women'];if(spr&&spr.loaded){drawJulie(x,spr,0,false,1,18,10,84);}}
-function drawMenuPreview(){let cv=document.getElementById('menuPreview');if(!cv)return;let x=cv.getContext('2d');x.clearRect(0,0,120,120);let ch=getSavedChar();let g=ch?ch.gender:gender;let spr=SPRITES[g==='m'?'man':'women'];if(spr&&spr.loaded){drawJulie(x,spr,0,false,1,18,10,84);}renderSlot();}
+function drawPreview(){let cv=document.getElementById('charCanvas'),x=cv.getContext('2d');if(!cv)return;x.clearRect(0,0,120,120);let spr=SPRITES[gender==='m'?'man':'women'];if(spr&&spr.loaded){drawPlayer(x,spr,0,false,1,18,10,84);}}
+function drawMenuPreview(){let cv=document.getElementById('menuPreview');if(!cv)return;let x=cv.getContext('2d');x.clearRect(0,0,120,120);let ch=getSavedChar();let g=ch?ch.gender:gender;let spr=SPRITES[g==='m'?'man':'women'];if(spr&&spr.loaded){drawPlayer(x,spr,0,false,1,18,10,84);}renderSlot();}
 function renderSlot(){let area=document.getElementById('slotArea');let ch=getSavedChar();if(!ch){area.innerHTML=`<div class="slot"><div>❓</div><div><b>Slot Vacío</b></div></div>`;document.getElementById('btnStart').disabled=true;}else{area.innerHTML=`<div class="slot hasChar"><div>${classes[ch.pClass].icon}</div><div><b>${ch.name}</b> Lv${ch.lv}</div></div>`;document.getElementById('btnStart').disabled=false;}}
 function openCharCreate(){mainMenu.style.display='none';charCreate.style.display='flex';drawPreview();let ch=getSavedChar();if(ch){c_name.value=ch.name;gender=ch.gender;pClass=ch.pClass;setG(gender);setC(pClass);}}
 function closeCharCreate(){charCreate.style.display='none';mainMenu.style.display='flex';drawMenuPreview();}
@@ -57,7 +57,15 @@ function showMsg(t){let m=document.getElementById('msgBox');m.innerText=t;m.styl
 
 const TILE=32, MAP_W=80, MAP_H=80;
 let nezhalMapImg=new Image(), nezhalMapLoaded=false;
-nezhalMapImg.onload=()=>{nezhalMapLoaded=true;buildCollision();};
+nezhalMapImg.onload=()=>{nezhalMapLoaded=true;buildCollision();document.getElementById('spriteInfo').innerText='Mapa OK';};
+nezhalMapImg.onerror=()=>{
+  if(nezhalMapImg.src.includes('nezhal.png')){
+    nezhalMapImg.src='./Nezhal.png';
+  }else{
+    document.getElementById('spriteInfo').innerText='Mapa no encontrado - revisa nombre';
+    buildCollision();
+  }
+};
 nezhalMapImg.src='./nezhal.png';
 const ITEMS={potion:{name:'Poción',icon:'🧪'},coin:{name:'Moneda',icon:'💰'},wood:{name:'Madera',icon:'🪵'},diamond:{name:'Diamante',icon:'💎'}};
 function getItem(id){return ITEMS[id]||{name:'???',icon:'❓'};}
@@ -72,7 +80,6 @@ for(let y=74;y<MAP_H;y++){COLLISION_MAP[y][33]=1;COLLISION_MAP[y][46]=1;}
 for(let y=6;y<=20;y++){for(let x=48;x<=77;x++)COLLISION_MAP[y][x]=1;}
 for(let y=3;y<=10;y++){for(let x=28;x<=52;x++)COLLISION_MAP[y][x]=1;}
 }
-
 const SPRITES={};
 function addSprite(id,url,cols=6,rows=2){
   const img=new Image();
@@ -90,53 +97,42 @@ function addSprite(id,url,cols=6,rows=2){
 addSprite('man','./man.png',6,2);
 addSprite('women','./women.png',6,2);
 
-// ==== MAPEO EXACTO QUE ME DISTE ====
-function getJulieFrame(dir, moving, tick){
-  // 1:abajo der, 2:abajo quieto, 3:abajo izq, 4:arriba izq, 5:arriba quieto, 6:arriba der
-  // 7:izq quieto, 8:izq der, 9:izq izq, 10:der quieto, 11:der der, 12:der izq
+function getFrame(dir, moving, tick){
   let row, col;
-  if(dir===0){ // ABAJO
+  if(dir===0){ // ABAJO 1-2-3
     row=0;
-    if(!moving) col=1; // 2 quieto
+    if(!moving) col=1;
     else{
-      let f = Math.floor(tick)%3;
-      if(f===0) col=0; // 1 der
-      else if(f===1) col=1; // 2 quieto
-      else col=2; // 3 izq
+      let f = Math.floor(tick/5)%3;
+      col = f===0?0:f===1?1:2;
     }
-  }else if(dir===3){ // ARRIBA
+  }else if(dir===3){ // ARRIBA 4-5-6
     row=0;
-    if(!moving) col=4; // 5 quieto
+    if(!moving) col=4;
     else{
-      let f = Math.floor(tick)%3;
-      if(f===0) col=3; // 4 izq
-      else if(f===1) col=4; // 5 quieto
-      else col=5; // 6 der
+      let f = Math.floor(tick/5)%3;
+      col = f===0?3:f===1?4:5;
     }
-  }else if(dir===1){ // IZQUIERDA
+  }else if(dir===1){ // IZQ 7-8-9
     row=1;
-    if(!moving) col=0; // 7 quieto
+    if(!moving) col=0;
     else{
-      let f = Math.floor(tick)%3;
-      if(f===0) col=0; // 7 quieto
-      else if(f===1) col=1; // 8 der
-      else col=2; // 9 izq
+      let f = Math.floor(tick/5)%3;
+      col = f===0?0:f===1?1:2;
     }
-  }else{ // DERECHA dir=2
+  }else{ // DER 10-11-12
     row=1;
-    if(!moving) col=3; // 10 quieto
+    if(!moving) col=3;
     else{
-      let f = Math.floor(tick)%3;
-      if(f===0) col=3; // 10 quieto
-      else if(f===1) col=4; // 11 der
-      else col=5; // 12 izq
+      let f = Math.floor(tick/5)%3;
+      col = f===0?3:f===1?4:5;
     }
   }
   return {row,col};
 }
-function drawJulie(ctx,spr,dir,moving,tick,dx,dy,dw,dh){
+function drawPlayer(ctx,spr,dir,moving,tick,dx,dy,dw,dh){
   if(!spr||!spr.loaded) return false;
-  let fr = getJulieFrame(dir,moving,tick);
+  let fr = getFrame(dir,moving,tick);
   try{
     let sx = fr.col * spr.rawW + 1;
     let sy = fr.row * spr.rawH + 1;
@@ -144,7 +140,6 @@ function drawJulie(ctx,spr,dir,moving,tick,dx,dy,dw,dh){
     return true;
   }catch(e){return false;}
 }
-
 let player,drops=[],keys={},joyX=0,joyY=0,joyActive=false,anim=0;
 function startGame(charData){
 let c=document.getElementById('game'),ctx=c.getContext('2d');
@@ -167,17 +162,18 @@ if(keys['s']||keys['arrowdown'])dy=1,player.dir=0;
 if(keys['a']||keys['arrowleft'])dx=-1,player.dir=1;
 if(keys['d']||keys['arrowright'])dx=1,player.dir=2;
 if(joyActive){dx+=joyX;dy+=joyY;if(Math.abs(joyX)>Math.abs(joyY))player.dir=joyX>0?2:1;else player.dir=joyY<0?3:0;}
-player.moving=dx!==0||dy!==0;if(player.moving)anim+=0.18;else anim=0;
+player.moving=dx!==0||dy!==0;if(player.moving)anim+=0.07;else anim=0;
 let nx=player.x+dx*0.12,ny=player.y+dy*0.12;
 if(canWalk(nx,player.y))player.x=nx;
 if(canWalk(player.x,ny))player.y=ny;
 let camX=player.x*TILE-c.width/2+TILE/2,camY=player.y*TILE-c.height/2+TILE/2;
-ctx.fillStyle='#1a2a1a';ctx.fillRect(0,0,c.width,c.height);
+ctx.fillStyle='#0a1a0a';ctx.fillRect(0,0,c.width,c.height);
 if(nezhalMapLoaded){ctx.drawImage(nezhalMapImg,-camX,-camY,MAP_W*TILE,MAP_H*TILE);}
+else{ctx.fillStyle='#1a2a1a';ctx.fillRect(-camX,-camY,MAP_W*TILE,MAP_H*TILE);ctx.fillStyle='#fff';ctx.fillText('Cargando mapa...',c.width/2-50,c.height/2);}
 drops.forEach(d=>{ctx.font='22px monospace';ctx.fillText(d.icon,d.x*TILE-camX,d.y*TILE-camY);});
 if(showCollision){ctx.fillStyle='rgba(255,0,0,0.45)';for(let y=0;y<MAP_H;y++){for(let x=0;x<MAP_W;x++){if(COLLISION_MAP[y][x]===1){ctx.fillRect(x*TILE-camX,y*TILE-camY,TILE,TILE);}}}}
-let pcx=c.width/2,pcy=c.height/2;let bob=Math.sin(anim*6)*2;
-drawJulie(ctx,SPRITES[player.sprite],player.dir,player.moving,anim*6,pcx-28,pcy-68+bob,56,84);
+let pcx=c.width/2,pcy=c.height/2;let bob=Math.sin(anim*2)*1.2;
+drawPlayer(ctx,SPRITES[player.sprite],player.dir,player.moving,anim,pcx-28,pcy-68+bob,56,84);
 document.getElementById('posTxt').innerText=`${Math.floor(player.x)},${Math.floor(player.y)}`;
 requestAnimationFrame(loop);
 }
