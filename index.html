@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WORLD OF TERRA BETA</title>
+<title>WORLD OF TERRA - REINO TECHOS</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:monospace;user-select:none}
 body{background:#000;overflow:hidden;touch-action:none}
@@ -24,18 +24,25 @@ button.secondary{background:#000;border:1px solid #ffae33;color:#ffae33}
 .bar{width:110px;height:8px;background:#222;border:1px solid #444;border-radius:4px;overflow:hidden;margin-top:3px}
 .fill{height:100%;transition:width 0.2s}
 #hotbar{position:fixed;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:10}
-.skill{width:46px;height:46px;background:#000d;border:2px solid #ffae33;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;cursor:pointer}
-#joy{position:fixed;bottom:70px;left:12px;width:100px;height:100px;background:rgba(255,255,255,0.07);border-radius:50%;z-index:10;border:1px solid rgba(255,174,51,0.2)}
+.skill{width:50px;height:50px;background:#000d;border:2px solid #ffae33;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;cursor:pointer}
+.skill.editOn{border-color:#ffff00;box-shadow:0 0 15px #ff0;background:#332a00}
+.skill.mapOn{border-color:#00ffff;box-shadow:0 0 15px #0ff;background:#002a33}
+#joy{position:fixed;bottom:75px;left:12px;width:100px;height:100px;background:rgba(255,255,255,0.07);border-radius:50%;z-index:10;border:1px solid rgba(255,174,51,0.2)}
 #stick{position:absolute;width:40px;height:40px;background:#ffae33;border-radius:50%;left:30px;top:30px}
-#inv{position:fixed;top:65px;right:8px;width:200px;background:rgba(0,0,0,0.92);border:1px solid #334;border-radius:10px;padding:8px;z-index:10;color:#fff;font-size:10px;display:none}
+#inv{position:fixed;top:65px;right:8px;width:220px;background:rgba(0,0,0,0.92);border:1px solid #334;border-radius:10px;padding:8px;z-index:10;color:#fff;font-size:10px;display:none}
 #invBtn{position:fixed;top:8px;right:8px;z-index:20;background:#000;border:1px solid #ffae33;color:#fff;padding:6px 12px;border-radius:8px;font-size:11px;cursor:pointer}
-#msgBox{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#000e;border:1px solid #ffae33;color:#ffae33;padding:8px 14px;border-radius:8px;z-index:30;display:none;font-size:12px}
+#msgBox{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#000e;border:2px solid #ffae33;color:#ffae33;padding:10px 18px;border-radius:10px;z-index:30;display:none;font-size:13px;text-align:center;max-width:90%}
+#editorPanel{position:fixed;top:65px;left:8px;background:rgba(0,0,0,0.95);border:2px solid #ffff00;border-radius:10px;padding:10px;z-index:15;color:#fff;font-size:11px;display:none;width:200px}
 </style>
 </head>
 <body>
-<div id="mainMenu" class="screen"><div class="card"><h1 style="color:#ffae33;text-align:center">WORLD OF TERRA</h1><p style="text-align:center;color:#aaa;font-size:11px">BETA - NEZHAL FINAL</p><div id="slotArea"></div><div class="preview"><canvas id="menuPreview" width="120" height="120"></canvas></div><button id="btnStart" onclick="startAdventure()">INICIAR PARTIDA</button><button class="secondary" onclick="openCharCreate()">CREAR PERSONAJE</button></div></div>
+<div id="mainMenu" class="screen"><div class="card"><h1 style="color:#ffae33;text-align:center">WORLD OF TERRA</h1><p style="text-align:center;color:#aaa;font-size:11px">EDITOR DE TECHOS 3/4</p><div id="slotArea"></div><div class="preview"><canvas id="menuPreview" width="120" height="120"></canvas></div><button id="btnStart" onclick="startAdventure()">INICIAR PARTIDA</button><button class="secondary" onclick="openCharCreate()">CREAR PERSONAJE</button></div></div>
 <div id="charCreate" class="screen" style="display:none"><div class="card"><h3 style="color:#ffae33;text-align:center">CREA TU LEYENDA</h3><div class="preview"><canvas id="charCanvas" width="120" height="120"></canvas></div><input id="c_name" placeholder="Nombre" maxlength="12"><div class="label">GÉNERO</div><div class="row"><div class="opt active" id="g_m" onclick="setG('m')">♂ Hombre</div><div class="opt" id="g_f" onclick="setG('f')">♀ Mujer</div></div><div class="label">CLASE</div><div class="row"><div class="opt active" id="c_war" onclick="setC('warrior')">⚔️ Guardián</div><div class="opt" id="c_arc" onclick="setC('archer')">🏹 Explorador</div></div><div class="row"><div class="opt" id="c_mag" onclick="setC('mage')">🔮 Hechicero</div><div class="opt" id="c_pri" onclick="setC('priest')">✨ Luminari</div></div><button onclick="createChar()">GUARDAR</button><button class="secondary" onclick="closeCharCreate()">VOLVER</button></div></div>
-<div id="gameWrap"><canvas id="game"></canvas><div id="uiTop"><div><b id="pName"></b> <span id="pClass"></span> Lv<span id="pLv">1</span><br><div class="bar"><div id="hpFill" class="fill" style="background:#f44;width:100%"></div></div><div class="bar"><div id="xpFill" class="fill" style="background:#ffae33;width:10%"></div></div></div><div style="text-align:right"><div id="invBtn" onclick="toggleInv()" style="position:relative;top:0;right:0;display:inline-block">🎒 INV</div><br><span id="spriteInfo" style="font-size:13px;color:#ffae33;font-weight:bold">cc x:0 y:0</span><br>💰 <span id="goldTxt">0</span></div></div><div id="inv"><b>INVENTARIO</b><div id="invList"></div><button class="secondary" style="margin-top:8px" onclick="goMenu()">🏠 MENU</button></div><div id="hotbar"><div class="skill" onclick="usePotion()">💊</div><div class="skill" onclick="addRandomItem()">🎁</div><div class="skill" onclick="toggleCollisionDebug()">🧱</div></div><div id="joy"><div id="stick"></div></div><div id="msgBox"></div></div>
+<div id="gameWrap"><canvas id="game"></canvas><div id="uiTop"><div><b id="pName"></b> Lv<span id="pLv">1</span><br><div class="bar"><div id="hpFill" class="fill" style="background:#f44;width:100%"></div></div><div class="bar"><div id="xpFill" class="fill" style="background:#ffae33;width:10%"></div></div></div><div style="text-align:right"><div id="invBtn" onclick="toggleInv()" style="position:relative;top:0;right:0;display:inline-block">🎒 INV</div><br><span id="spriteInfo" style="font-size:13px;color:#ffae33;font-weight:bold">cc x:0 y:0</span><br>💰 <span id="goldTxt">0</span></div></div>
+<div id="editorPanel"><b style="color:#ff0">🔧 EDITOR</b><br>Toque CORTO: 🔴/🟢 Colisión<br>Mantener 1s: 🔵 TECHO (arriba pj)<br><b style="color:#0ff">🗺️ = mapa todo arriba debug</b><br><br><button class="secondary" style="font-size:11px;padding:7px" onclick="exportCustom()">📋 EXPORTAR WALL+ROOF</button><button class="secondary" style="font-size:11px;padding:7px" onclick="clearCustom()">🗑️ BORRAR TODO</button><button style="font-size:11px;padding:7px;background:#ff0;color:#000" onclick="toggleEditMode()">SALIR EDITOR</button><div id="editCount" style="margin-top:8px;color:#ff0"></div></div>
+<div id="inv"><b>INVENTARIO</b><div id="invList"></div><button class="secondary" style="margin-top:8px" onclick="goMenu()">🏠 MENU</button></div>
+<div id="hotbar"><div class="skill" onclick="usePotion()">💊</div><div class="skill" id="brickBtn">🧱</div><div class="skill" id="mapBtn">🗺️</div><div class="skill" onclick="addRandomItem()">🎁</div></div>
+<div id="joy"><div id="stick"></div></div><div id="msgBox"></div></div>
 <script>
 let gender='m',pClass='warrior';
 const classes={warrior:{name:'Guardián',icon:'⚔️'},archer:{name:'Explorador',icon:'🏹'},mage:{name:'Hechicero',icon:'🔮'},priest:{name:'Luminari',icon:'✨'}};
@@ -44,78 +51,53 @@ function getSavedChar(){try{return JSON.parse(localStorage.getItem(LS_KEY))}catc
 function saveChar(ch){localStorage.setItem(LS_KEY,JSON.stringify(ch));}
 function setG(g){gender=g;document.getElementById('g_m').classList.toggle('active',g==='m');document.getElementById('g_f').classList.toggle('active',g==='f');drawPreview();}
 function setC(c){pClass=c;document.querySelectorAll('[id^=c_]').forEach(e=>e.classList.remove('active'));let m={warrior:'war',archer:'arc',mage:'mag',priest:'pri'};document.getElementById('c_'+m[c]).classList.add('active');drawPreview();}
-function drawPreview(){let cv=document.getElementById('charCanvas'),x=cv.getContext('2d');if(!cv)return;x.clearRect(0,0,120,120);let spr=SPRITES[gender==='m'?'man':'women'];if(spr&&spr.loaded){drawPlayer(x,spr,0,false,1,18,10,84);}}
-function drawMenuPreview(){let cv=document.getElementById('menuPreview');if(!cv)return;let x=cv.getContext('2d');x.clearRect(0,0,120,120);let ch=getSavedChar();let g=ch?ch.gender:gender;let spr=SPRITES[g==='m'?'man':'women'];if(spr&&spr.loaded){drawPlayer(x,spr,0,false,1,18,10,84);}renderSlot();}
+function drawPreview(){let cv=document.getElementById('charCanvas'),x=cv.getContext('2d');if(!cv)return;x.clearRect(0,0,120,120);let spr=SPRITES[gender==='m'?'man':'women'];if(spr&&spr.loaded){x.fillStyle='rgba(0,0,0,0.5)';x.beginPath();x.ellipse(60,108,16,5,0,0,Math.PI*2);x.fill();drawPlayer(x,spr,0,false,1,26,26,48,72);}}
+function drawMenuPreview(){let cv=document.getElementById('menuPreview');if(!cv)return;let x=cv.getContext('2d');x.clearRect(0,0,120,120);let ch=getSavedChar();let g=ch?ch.gender:gender;let spr=SPRITES[g==='m'?'man':'women'];if(spr&&spr.loaded){x.fillStyle='rgba(0,0,0,0.5)';x.beginPath();x.ellipse(60,108,16,5,0,0,Math.PI*2);x.fill();drawPlayer(x,spr,0,false,1,26,26,48,72);}renderSlot();}
 function renderSlot(){let area=document.getElementById('slotArea');let ch=getSavedChar();if(!ch){area.innerHTML=`<div class="slot"><div>❓</div><div><b>Slot Vacío</b></div></div>`;document.getElementById('btnStart').disabled=true;}else{area.innerHTML=`<div class="slot hasChar"><div>${classes[ch.pClass].icon}</div><div><b>${ch.name}</b> Lv${ch.lv}</div></div>`;document.getElementById('btnStart').disabled=false;}}
 function openCharCreate(){mainMenu.style.display='none';charCreate.style.display='flex';drawPreview();let ch=getSavedChar();if(ch){c_name.value=ch.name;gender=ch.gender;pClass=ch.pClass;setG(gender);setC(pClass);}}
 function closeCharCreate(){charCreate.style.display='none';mainMenu.style.display='flex';drawMenuPreview();}
-function createChar(){let n=c_name.value.trim();if(n.length<2){alert('Nombre corto');return;}let exist=getSavedChar();let ch={name:n,gender,pClass,x:22,y:32,lv:exist?exist.lv:1,xp:exist?exist.xp:0,gold:exist?exist.gold:0,hp:140,maxHp:140,atk:16,def:14,inv:exist?exist.inv:{potion:3}};saveChar(ch);closeCharCreate();}
-function startAdventure(){let ch=getSavedChar();if(!ch){openCharCreate();return;}mainMenu.style.display='none';gameWrap.style.display='block';pName.innerText=ch.name;pClass.innerText=classes[ch.pClass].icon;startGame(ch);}
+function createChar(){let n=c_name.value.trim();if(n.length<2){alert('Nombre corto');return;}let exist=getSavedChar();let ch={name:n,gender,pClass,x:40,y:70,lv:exist?exist.lv:1,xp:exist?exist.xp:0,gold:exist?exist.gold:0,hp:140,maxHp:140,atk:16,def:14,inv:exist?exist.inv:{potion:3}};saveChar(ch);closeCharCreate();}
+function startAdventure(){let ch=getSavedChar();if(!ch){openCharCreate();return;}mainMenu.style.display='none';gameWrap.style.display='block';pName.innerText=ch.name;startGame(ch);}
 function goMenu(){if(player){saveChar({...player});}gameWrap.style.display='none';mainMenu.style.display='flex';drawMenuPreview();}
 function toggleInv(){let i=document.getElementById('inv');i.style.display=i.style.display==='block'?'none':'block';updateInvUI();}
-function showMsg(t){let m=document.getElementById('msgBox');m.innerText=t;m.style.display='block';setTimeout(()=>m.style.display='none',2000);}
+function showMsg(t){let m=document.getElementById('msgBox');m.innerText=t;m.style.display='block';setTimeout(()=>m.style.display='none',3000);}
 const TILE=32, MAP_W=80, MAP_H=80;
 let nezhalMapImg=new Image(), nezhalMapLoaded=false;
-let mapAttempts=['./nezhal.png','./nerzhal.png','./Nezhal.png','./Nerzhal.png','./map.png','./nezhal.jpg'];
-let mapIdx=0;
 nezhalMapImg.onload=()=>{nezhalMapLoaded=true;buildCollision();};
-nezhalMapImg.onerror=()=>{mapIdx++;if(mapIdx < mapAttempts.length){nezhalMapImg.src = mapAttempts[mapIdx];}else{buildCollision();}};
-nezhalMapImg.src=mapAttempts[0];
+nezhalMapImg.onerror=()=>{buildCollision();};
+nezhalMapImg.src='./nezhal.png';
 const ITEMS={potion:{name:'Poción',icon:'🧪'},coin:{name:'Moneda',icon:'💰'},wood:{name:'Madera',icon:'🪵'},diamond:{name:'Diamante',icon:'💎'}};
 function getItem(id){return ITEMS[id]||{name:'???',icon:'❓'};}
-let COLLISION_MAP=[], showCollision=false;
-function toggleCollisionDebug(){showCollision=!showCollision;showMsg(showCollision?"Colisiones ON":"OFF");}
-
+let COLLISION_MAP=[], showCollision=false, editMode=false, mapOnTop=false;
+let customEdits={}, customRoofs={};
+try{customEdits=JSON.parse(localStorage.getItem('nezhal_custom')||'{}');customRoofs=JSON.parse(localStorage.getItem('nezhal_roofs')||'{}');}catch(e){}
+function toggleCollisionDebug(){showCollision=!showCollision;showMsg(showCollision?"🔴 ROJO ON":"ROJO OFF");}
+function toggleMapTop(){mapOnTop=!mapOnTop;document.getElementById('mapBtn').classList.toggle('mapOn',mapOnTop);showMsg(mapOnTop?"🗺️ MAPA TODO ARRIBA (debug)":"🗺️ MAPA ABAJO normal");}
+function toggleEditMode(){editMode=!editMode;document.getElementById('editorPanel').style.display=editMode?'block':'none';document.getElementById('brickBtn').classList.toggle('editOn',editMode);showCollision=true;showMsg(editMode?"🔧 EDITOR ON - corto=colisión, largo=techo":"EDITOR OFF");updateEditCount();}
+function updateEditCount(){document.getElementById('editCount').innerText=Object.keys(customEdits).length+" walls | "+Object.keys(customRoofs).length+" roofs";}
+function saveCustom(){localStorage.setItem('nezhal_custom',JSON.stringify(customEdits));localStorage.setItem('nezhal_roofs',JSON.stringify(customRoofs));}
+function clearCustom(){if(confirm("¿Borrar paredes y techos?")){customEdits={};customRoofs={};saveCustom();buildCollision();showMsg("Todo borrado");updateEditCount();}}
+function exportCustom(){
+  let w="",r="",cW=0,cR=0;
+  for(let k in customEdits){let [x,y]=k.split(',');if(customEdits[k]==1){w+=`wall(${x},${y},${x},${y});\n`;cW++;}}
+  for(let k in customRoofs){let [x,y]=k.split(',');r+=`roof(${x},${y},${x},${y});\n`;cR++;}
+  let out=`// WALLS (${cW})\n${w}\n// ROOFS - se dibujan ARRIBA del pj (${cR})\n${r}`;
+  navigator.clipboard.writeText(out).then(()=>showMsg(`📋 ${cW} walls + ${cR} roofs copiados`));console.log(out);alert(out);
+}
 function buildCollision(){
   for(let y=0;y<MAP_H;y++){COLLISION_MAP[y]=[];for(let x=0;x<MAP_W;x++)COLLISION_MAP[y][x]=0;}
   function wall(x1,y1,x2,y2){for(let y=Math.min(y1,y2); y<=Math.max(y1,y2); y++){for(let x=Math.min(x1,x2); x<=Math.max(x1,x2); x++){if(y>=0&&y<MAP_H&&x>=0&&x<MAP_W) COLLISION_MAP[y][x]=1;}}}
   function free(x1,y1,x2,y2){for(let y=Math.min(y1,y2); y<=Math.max(y1,y2); y++){for(let x=Math.min(x1,x2); x<=Math.max(x1,x2); x++){if(y>=0&&y<MAP_H&&x>=0&&x<MAP_W) COLLISION_MAP[y][x]=0;}}}
-
-  // BORDES
   wall(0,0,79,2); wall(0,77,79,79); wall(0,0,2,79); wall(77,0,79,79);
   wall(6,0,10,79); wall(70,0,74,79); wall(0,71,79,79);
-
-  // === TU LISTA MANUAL EXACTA ===
-  wall(68,0,68,79); // 68 izq punta a punta
-  wall(45,13,48,13); wall(45,13,45,18); wall(35,17,43,17);
+  wall(68,0,68,79); wall(45,13,48,13); wall(45,13,45,18); wall(35,17,43,17);
   wall(34,18,34,18); wall(33,13,33,18); wall(31,13,33,13); wall(30,13,30,13);
-  wall(46,68,68,68); wall(42,67,46,67); wall(42,67,42,71);
-  wall(36,67,36,71); wall(33,67,36,67); wall(11,68,33,68);
-
-  // === CASTILLO 100% CERRADO ===
-  wall(28,0,56,13);
-
-  // === CASAS CORREGIDAS CON TUS ULTIMAS 4 FOTOS ===
-  // Roja izq
-  wall(13,19,31,32);
-  // Azul arriba - cc x:56 y:26 - ahora no te subis mas al techo
-  wall(48,22,67,37);
-  // Marron abajo der - cc x:48 y:35 / x:66 y:32 / x:66 y:54
-  wall(50,44,66,66);
-  // Verde abajo izq
-  wall(13,42,31,55);
-
-  // === FUENTE Y PIEDRAS ===
-  wall(10,55,18,62); // fuente
-  wall(17,60,28,63); // piedras frente verde
-  wall(28,64,32,68); // roca grande
-  wall(10,68,35,72); // muro piedra abajo
-  wall(65,62,70,72); // esquina der
-  wall(13,27,14,29); // barril rojo
-  wall(65,37,66,39); // barril azul
-
-  // === PASILLOS LIBRES - FIX DE TUS FOTOS ===
-  // Pasillo derecho libre x:66
-  free(66,20,67,66);
-  // Pasillo izq
-  free(10,40,12,46);
-  free(6,42,10,48);
-  free(32,40,46,42);
-  free(32,14,46,22);
-  free(20,28,24,40);
-  free(32,71,44,79);
+  wall(46,68,68,68); wall(42,67,46,67); wall(42,67,42,71); wall(36,67,36,71); wall(33,67,36,67); wall(11,68,33,68);
+  wall(28,0,56,13); wall(13,19,31,32); wall(48,22,67,37); wall(50,44,66,66); wall(13,42,31,55);
+  wall(10,55,18,62); wall(17,60,28,63); wall(28,64,32,68); wall(10,68,35,72); wall(65,62,70,72); wall(13,27,14,29); wall(65,37,66,39);
+  free(66,20,67,66); free(10,40,12,46); free(6,42,10,48); free(32,40,46,42); free(32,14,46,22); free(20,28,24,40); free(32,71,44,79);
+  for(let k in customEdits){let [x,y]=k.split(',').map(Number); if(y>=0&&y<MAP_H&&x>=0&&x<MAP_W) COLLISION_MAP[y][x]=customEdits[k];}
 }
-
 const SPRITES={};
 function addSprite(id,url,cols=6,rows=2){const img=new Image();const e={img,url,cols,rows,loaded:false,fw:0,fh:0,rawW:0,rawH:0};SPRITES[id]=e;img.onload=()=>{e.loaded=true;e.rawW=img.width/cols;e.rawH=img.height/rows;e.fw=Math.floor(e.rawW-2);e.fh=Math.floor(e.rawH-2);};img.src=url;}
 addSprite('man','./man.png',6,2);
@@ -134,6 +116,32 @@ let joy=document.getElementById('joy'),stick=document.getElementById('stick');
 joy.addEventListener('touchstart',()=>joyActive=true);
 joy.addEventListener('touchmove',e=>{let r=joy.getBoundingClientRect();let cx=r.left+50,cy=r.top+50;let dx=e.touches[0].clientX-cx,dy=e.touches[0].clientY-cy;let d=Math.hypot(dx,dy);if(d>35){dx=dx/d*35;dy=dy/d*35;}stick.style.left=(30+dx)+'px';stick.style.top=(30+dy)+'px';joyX=dx/35;joyY=dy/35;e.preventDefault();},{passive:false});
 joy.addEventListener('touchend',()=>{joyActive=false;joyX=0;joyY=0;stick.style.left='30px';stick.style.top='30px';});
+let brickBtn=document.getElementById('brickBtn'); let pressTimer=null;
+brickBtn.addEventListener('touchstart',()=>{pressTimer=setTimeout(()=>{toggleEditMode();pressTimer=null;},800);});
+brickBtn.addEventListener('touchend',e=>{if(pressTimer){clearTimeout(pressTimer);toggleCollisionDebug();}pressTimer=null;e.preventDefault();});
+brickBtn.addEventListener('mousedown',()=>{pressTimer=setTimeout(()=>{toggleEditMode();pressTimer=null;},800);});
+brickBtn.addEventListener('mouseup',()=>{if(pressTimer){clearTimeout(pressTimer);toggleCollisionDebug();}pressTimer=null;});
+document.getElementById('mapBtn').addEventListener('click',toggleMapTop);
+function worldFromScreen(sx,sy){let camX=player.x*TILE-c.width/2+TILE/2,camY=player.y*TILE-c.height/2+TILE/2;return{wx:Math.floor((sx+camX)/TILE),wy:Math.floor((sy+camY)/TILE)};}
+function toggleWall(wx,wy){if(wy<0||wy>=MAP_H||wx<0||wx>=MAP_W)return;let cur=COLLISION_MAP[wy][wx]||0;let next=cur?0:1;COLLISION_MAP[wy][wx]=next;customEdits[wx+","+wy]=next;saveCustom();updateEditCount();showMsg((next?"🔴 BANEADO ":"🟢 LIBRE ")+`x:${wx} y:${wy}`);}
+function toggleRoof(wx,wy){if(wy<0||wy>=MAP_H||wx<0||wx>=MAP_W)return;let k=wx+","+wy;if(customRoofs[k]){delete customRoofs[k];showMsg(`🟦 TECHO QUITADO x:${wx} y:${wy}`);}else{customRoofs[k]=1;showMsg(`🔵 TECHO MARCADO x:${wx} y:${wy} - ahora va ARRIBA del pj`);}saveCustom();updateEditCount();}
+
+let mapPressTimer=null, mapPressPos=null;
+c.addEventListener('touchstart',e=>{if(!editMode)return;let t=e.touches[0];mapPressPos=worldFromScreen(t.clientX,t.clientY);mapPressTimer=setTimeout(()=>{toggleRoof(mapPressPos.wx,mapPressPos.wy);mapPressTimer=null;mapPressPos=null;},1000);});
+c.addEventListener('touchend',e=>{
+  if(!editMode)return;
+  if(mapPressTimer){clearTimeout(mapPressTimer); if(mapPressPos) toggleWall(mapPressPos.wx,mapPressPos.wy);}
+  mapPressTimer=null; mapPressPos=null;
+  e.preventDefault();
+},{passive:false});
+c.addEventListener('mousedown',e=>{if(!editMode)return;mapPressPos=worldFromScreen(e.clientX,e.clientY);mapPressTimer=setTimeout(()=>{toggleRoof(mapPressPos.wx,mapPressPos.wy);mapPressTimer=null;mapPressPos=null;},1000);});
+c.addEventListener('mouseup',e=>{
+  if(!editMode)return;
+  if(mapPressTimer){clearTimeout(mapPressTimer); if(mapPressPos) toggleWall(mapPressPos.wx,mapPressPos.wy);}
+  mapPressTimer=null; mapPressPos=null;
+});
+c.addEventListener('contextmenu',e=>e.preventDefault());
+
 window.usePotion=()=>{if((player.inv.potion||0)>0&&player.hp<player.maxHp){player.inv.potion--;if(player.inv.potion<=0)delete player.inv.potion;player.hp=Math.min(player.maxHp,player.hp+50);updateInvUI();}};
 window.addRandomItem=()=>{let ids=Object.keys(ITEMS);let id=ids[Math.floor(Math.random()*ids.length)];drops.push({x:player.x+Math.random()*2,y:player.y+Math.random()*2,id,count:1,icon:ITEMS[id].icon});};
 function canWalk(x,y){let ix=Math.floor(x),iy=Math.floor(y);if(iy<0||iy>=MAP_H||ix<0||ix>=MAP_W)return false;if(COLLISION_MAP[iy]?.[ix]===1)return false;return true;}
@@ -150,12 +158,52 @@ if(canWalk(nx,player.y))player.x=nx;
 if(canWalk(player.x,ny))player.y=ny;
 let camX=player.x*TILE-c.width/2+TILE/2,camY=player.y*TILE-c.height/2+TILE/2;
 ctx.fillStyle='#0a1a0a';ctx.fillRect(0,0,c.width,c.height);
-if(nezhalMapLoaded){ctx.drawImage(nezhalMapImg,-camX,-camY,MAP_W*TILE,MAP_H*TILE);}
-else{ctx.fillStyle='#1a2a1a';ctx.fillRect(-camX,-camY,MAP_W*TILE,MAP_H*TILE);}
-drops.forEach(d=>{ctx.font='22px monospace';ctx.fillText(d.icon,d.x*TILE-camX,d.y*TILE-camY);});
-if(showCollision){ctx.fillStyle='rgba(255,0,0,0.45)';for(let y=0;y<MAP_H;y++){for(let x=0;x<MAP_W;x++){if(COLLISION_MAP[y][x]===1){ctx.fillRect(x*TILE-camX,y*TILE-camY,TILE,TILE);}}}}
 let pcx=c.width/2,pcy=c.height/2;let bob=Math.sin(anim*2)*1.2;
-drawPlayer(ctx,SPRITES[player.sprite],player.dir,player.moving,anim,pcx-28,pcy-68+bob,56,84);
+
+function drawWorldBase(){
+  if(nezhalMapLoaded) ctx.drawImage(nezhalMapImg,-camX,-camY,MAP_W*TILE,MAP_H*TILE);
+  else{ctx.fillStyle='#1a2a1a';ctx.fillRect(-camX,-camY,MAP_W*TILE,MAP_H*TILE);}
+  drops.forEach(d=>{ctx.font='22px monospace';ctx.fillText(d.icon,d.x*TILE-camX,d.y*TILE-camY);});
+}
+function drawShadow(){ctx.fillStyle='rgba(0,0,0,0.45)';ctx.beginPath();ctx.ellipse(pcx,pcy+32,14,6,0,0,Math.PI*2);ctx.fill();}
+function drawPj(){drawPlayer(ctx,SPRITES[player.sprite],player.dir,player.moving,anim,pcx-24,pcy-60+bob,48,72);}
+function drawRoofsLayer(){
+  if(!nezhalMapLoaded) return;
+  for(let k in customRoofs){
+    let [wx,wy]=k.split(',').map(Number);
+    let sx=wx*TILE, sy=wy*TILE;
+    let dx=wx*TILE-camX, dy=wy*TILE-camY;
+    if(dx>-TILE && dx<c.width && dy>-TILE && dy<c.height){
+      ctx.drawImage(nezhalMapImg, sx, sy, TILE, TILE, dx, dy, TILE, TILE);
+    }
+  }
+}
+function drawDebug(){
+  if(!showCollision && !editMode) return;
+  if(showCollision){
+    ctx.fillStyle='rgba(255,0,0,0.45)';
+    for(let y=0;y<MAP_H;y++){for(let x=0;x<MAP_W;x++){if(COLLISION_MAP[y][x]===1){ctx.fillRect(x*TILE-camX,y*TILE-camY,TILE,TILE);}}}
+  }
+  if(editMode){
+    ctx.strokeStyle='#ffff00';ctx.lineWidth=2;ctx.setLineDash([4,4]);
+    for(let k in customEdits){let [x,y]=k.split(',').map(Number);if(customEdits[k]==1)ctx.strokeRect(x*TILE-camX+1,y*TILE-camY+1,TILE-2,TILE-2);else{ctx.fillStyle='rgba(0,255,0,0.35)';ctx.fillRect(x*TILE-camX,y*TILE-camY,TILE,TILE);}}
+    ctx.setLineDash([]);
+    for(let k in customRoofs){
+      let [x,y]=k.split(',').map(Number);
+      ctx.fillStyle='rgba(0,150,255,0.45)';
+      ctx.fillRect(x*TILE-camX, y*TILE-camY, TILE, TILE);
+      ctx.fillStyle='#fff';ctx.font='bold 14px monospace';ctx.fillText('🔵',x*TILE-camX+8,y*TILE-camY+20);
+    }
+  }
+}
+
+if(!mapOnTop){
+  drawWorldBase(); drawShadow(); drawPj(); drawRoofsLayer(); drawDebug();
+} else {
+  drawShadow(); drawPj(); ctx.globalAlpha=0.68; drawWorldBase(); drawRoofsLayer(); ctx.globalAlpha=1; drawDebug();
+  ctx.fillStyle='#0ff';ctx.font='bold 11px monospace';ctx.fillText('MAPA ARRIBA DEBUG',10,70);
+}
+
 let fx=Math.floor(player.x), fy=Math.floor(player.y);
 document.getElementById('spriteInfo').innerText=`cc x:${fx} y:${fy}`;
 requestAnimationFrame(loop);
