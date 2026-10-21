@@ -33,7 +33,7 @@ button.secondary{background:#000;border:1px solid #ffae33;color:#ffae33}
 </style>
 </head>
 <body>
-<div id="mainMenu" class="screen"><div class="card"><h1 style="color:#ffae33;text-align:center">WORLD OF TERRA</h1><p style="text-align:center;color:#aaa;font-size:11px">BETA - NEZHAL</p><div id="slotArea"></div><div class="preview"><canvas id="menuPreview" width="120" height="120"></canvas></div><button id="btnStart" onclick="startAdventure()">INICIAR PARTIDA</button><button class="secondary" onclick="openCharCreate()">CREAR PERSONAJE</button></div></div>
+<div id="mainMenu" class="screen"><div class="card"><h1 style="color:#ffae33;text-align:center">WORLD OF TERRA</h1><p style="text-align:center;color:#aaa;font-size:11px">BETA - NEZHAL FINAL</p><div id="slotArea"></div><div class="preview"><canvas id="menuPreview" width="120" height="120"></canvas></div><button id="btnStart" onclick="startAdventure()">INICIAR PARTIDA</button><button class="secondary" onclick="openCharCreate()">CREAR PERSONAJE</button></div></div>
 <div id="charCreate" class="screen" style="display:none"><div class="card"><h3 style="color:#ffae33;text-align:center">CREA TU LEYENDA</h3><div class="preview"><canvas id="charCanvas" width="120" height="120"></canvas></div><input id="c_name" placeholder="Nombre" maxlength="12"><div class="label">GÉNERO</div><div class="row"><div class="opt active" id="g_m" onclick="setG('m')">♂ Hombre</div><div class="opt" id="g_f" onclick="setG('f')">♀ Mujer</div></div><div class="label">CLASE</div><div class="row"><div class="opt active" id="c_war" onclick="setC('warrior')">⚔️ Guardián</div><div class="opt" id="c_arc" onclick="setC('archer')">🏹 Explorador</div></div><div class="row"><div class="opt" id="c_mag" onclick="setC('mage')">🔮 Hechicero</div><div class="opt" id="c_pri" onclick="setC('priest')">✨ Luminari</div></div><button onclick="createChar()">GUARDAR</button><button class="secondary" onclick="closeCharCreate()">VOLVER</button></div></div>
 <div id="gameWrap"><canvas id="game"></canvas><div id="uiTop"><div><b id="pName"></b> <span id="pClass"></span> Lv<span id="pLv">1</span><br><div class="bar"><div id="hpFill" class="fill" style="background:#f44;width:100%"></div></div><div class="bar"><div id="xpFill" class="fill" style="background:#ffae33;width:10%"></div></div></div><div style="text-align:right"><div id="invBtn" onclick="toggleInv()" style="position:relative;top:0;right:0;display:inline-block">🎒 INV</div><br><span id="spriteInfo" style="font-size:13px;color:#ffae33;font-weight:bold">cc x:0 y:0</span><br>💰 <span id="goldTxt">0</span></div></div><div id="inv"><b>INVENTARIO</b><div id="invList"></div><button class="secondary" style="margin-top:8px" onclick="goMenu()">🏠 MENU</button></div><div id="hotbar"><div class="skill" onclick="usePotion()">💊</div><div class="skill" onclick="addRandomItem()">🎁</div><div class="skill" onclick="toggleCollisionDebug()">🧱</div></div><div id="joy"><div id="stick"></div></div><div id="msgBox"></div></div>
 <script>
@@ -73,53 +73,47 @@ function buildCollision(){
 
   // BORDES
   wall(0,0,79,2); wall(0,77,79,79); wall(0,0,2,79); wall(77,0,79,79);
-  wall(6,0,10,79); wall(70,0,74,79); wall(6,8,74,12);
+  wall(6,0,10,79); wall(70,0,74,79); wall(0,71,79,79);
 
-  // TUS MUROS
-  wall(68,0,68,79);
-  wall(45,13,48,13); wall(45,13,45,18); wall(35,17,43,17); wall(34,18,34,18);
-  wall(33,13,33,18); wall(31,13,33,13); wall(30,13,30,13);
+  // === TU LISTA MANUAL EXACTA ===
+  wall(68,0,68,79); // 68 izq punta a punta
+  wall(45,13,48,13); wall(45,13,45,18); wall(35,17,43,17);
+  wall(34,18,34,18); wall(33,13,33,18); wall(31,13,33,13); wall(30,13,30,13);
   wall(46,68,68,68); wall(42,67,46,67); wall(42,67,42,71);
   wall(36,67,36,71); wall(33,67,36,67); wall(11,68,33,68);
 
-  // CALLES LIBRES
-  free(34,11,45,79); free(6,40,70,46); free(6,42,10,48); free(38,12,42,15);
-  free(20,28,24,75); free(37,67,41,68); free(34,70,45,79);
+  // === CASTILLO 100% CERRADO ===
+  wall(28,0,56,13);
 
-  // CASTILLO
-  wall(30,3,38,11); wall(46,3,54,11); wall(39,3,45,6);
-  free(38,12,42,15);
+  // === CASAS CORREGIDAS CON TUS ULTIMAS 4 FOTOS ===
+  // Roja izq
+  wall(13,19,31,32);
+  // Azul arriba - cc x:56 y:26 - ahora no te subis mas al techo
+  wall(48,22,67,37);
+  // Marron abajo der - cc x:48 y:35 / x:66 y:32 / x:66 y:54
+  wall(50,44,66,66);
+  // Verde abajo izq
+  wall(13,42,31,55);
 
-  // CASA ROJA - PORCHE LIBRE
-  wall(14,21,28,30);
-  free(20,30,20,31); // puerta
-  free(19,30,21,32); // porche
+  // === FUENTE Y PIEDRAS ===
+  wall(10,55,18,62); // fuente
+  wall(17,60,28,63); // piedras frente verde
+  wall(28,64,32,68); // roca grande
+  wall(10,68,35,72); // muro piedra abajo
+  wall(65,62,70,72); // esquina der
+  wall(13,27,14,29); // barril rojo
+  wall(65,37,66,39); // barril azul
 
-  // CASA AZUL
-  wall(49,27,65,36);
-  wall(50,37,53,40); wall(61,37,64,40);
-  wall(65,37,66,39); // barril
-  free(55,36,58,38);
-
-  // CASA VERDE
-  wall(18,53,30,62);
-  wall(28,54,29,56); // barril
-  free(23,62,24,64);
-
-  // CASA MARRON
-  wall(49,53,65,64);
-  wall(66,62,67,64);
-  free(55,64,56,66);
-
-  // OBJETOS - PIEDRAS, FUENTE, BARRILES
-  wall(11,61,16,66); // fuente
-  wall(9,50,14,54); // roca izq medio
-  wall(9,68,14,71); // roca izq abajo
-  wall(32,66,36,70); // roca centro abajo
-  wall(66,16,70,20); // piedra arriba der
-  wall(69,29,72,32); // piedra der
-  wall(67,51,70,54); // piedra abajo der
-  wall(13,25,14,28); // cosas casa roja
+  // === PASILLOS LIBRES - FIX DE TUS FOTOS ===
+  // Pasillo derecho libre x:66
+  free(66,20,67,66);
+  // Pasillo izq
+  free(10,40,12,46);
+  free(6,42,10,48);
+  free(32,40,46,42);
+  free(32,14,46,22);
+  free(20,28,24,40);
+  free(32,71,44,79);
 }
 
 const SPRITES={};
