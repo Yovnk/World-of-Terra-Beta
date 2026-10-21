@@ -103,28 +103,28 @@ function getFrame(dir, moving, tick){
     row=0;
     if(!moving) col=1;
     else{
-      let f = Math.floor(tick/5)%3;
+      let f = Math.floor(tick/4)%3;
       col = f===0?0:f===1?1:2;
     }
   }else if(dir===3){ // ARRIBA 4-5-6
     row=0;
     if(!moving) col=4;
     else{
-      let f = Math.floor(tick/5)%3;
+      let f = Math.floor(tick/4)%3;
       col = f===0?3:f===1?4:5;
     }
   }else if(dir===1){ // IZQ 7-8-9
     row=1;
     if(!moving) col=0;
     else{
-      let f = Math.floor(tick/5)%3;
+      let f = Math.floor(tick/4)%3;
       col = f===0?0:f===1?1:2;
     }
   }else{ // DER 10-11-12
     row=1;
     if(!moving) col=3;
     else{
-      let f = Math.floor(tick/5)%3;
+      let f = Math.floor(tick/4)%3;
       col = f===0?3:f===1?4:5;
     }
   }
@@ -162,7 +162,7 @@ if(keys['s']||keys['arrowdown'])dy=1,player.dir=0;
 if(keys['a']||keys['arrowleft'])dx=-1,player.dir=1;
 if(keys['d']||keys['arrowright'])dx=1,player.dir=2;
 if(joyActive){dx+=joyX;dy+=joyY;if(Math.abs(joyX)>Math.abs(joyY))player.dir=joyX>0?2:1;else player.dir=joyY<0?3:0;}
-player.moving=dx!==0||dy!==0;if(player.moving)anim+=0.07;else anim=0;
+player.moving=dx!==0||dy!==0;if(player.moving)anim+=0.11;else anim=0;
 let nx=player.x+dx*0.12,ny=player.y+dy*0.12;
 if(canWalk(nx,player.y))player.x=nx;
 if(canWalk(player.x,ny))player.y=ny;
