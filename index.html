@@ -30,16 +30,12 @@ button.secondary{background:#000;border:1px solid #ffae33;color:#ffae33}
 #inv{position:fixed;top:65px;right:8px;width:200px;background:rgba(0,0,0,0.92);border:1px solid #334;border-radius:10px;padding:8px;z-index:10;color:#fff;font-size:10px;display:none}
 #invBtn{position:fixed;top:8px;right:8px;z-index:20;background:#000;border:1px solid #ffae33;color:#fff;padding:6px 12px;border-radius:8px;font-size:11px;cursor:pointer}
 #msgBox{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#000e;border:1px solid #ffae33;color:#ffae33;padding:8px 14px;border-radius:8px;z-index:30;display:none;font-size:12px}
-#coordHelper{position:fixed;top:50%;left:8px;transform:translateY(-50%);background:#000e;border:2px solid #ffae33;color:#ffae33;padding:8px 10px;border-radius:10px;z-index:20;font-size:13px;line-height:16px}
-#coordHelper b{color:#fff;font-size:14px}
 </style>
 </head>
 <body>
 <div id="mainMenu" class="screen"><div class="card"><h1 style="color:#ffae33;text-align:center">WORLD OF TERRA</h1><p style="text-align:center;color:#aaa;font-size:11px">BETA - NEZHAL</p><div id="slotArea"></div><div class="preview"><canvas id="menuPreview" width="120" height="120"></canvas></div><button id="btnStart" onclick="startAdventure()">INICIAR PARTIDA</button><button class="secondary" onclick="openCharCreate()">CREAR PERSONAJE</button></div></div>
 <div id="charCreate" class="screen" style="display:none"><div class="card"><h3 style="color:#ffae33;text-align:center">CREA TU LEYENDA</h3><div class="preview"><canvas id="charCanvas" width="120" height="120"></canvas></div><input id="c_name" placeholder="Nombre" maxlength="12"><div class="label">GÉNERO</div><div class="row"><div class="opt active" id="g_m" onclick="setG('m')">♂ Hombre</div><div class="opt" id="g_f" onclick="setG('f')">♀ Mujer</div></div><div class="label">CLASE</div><div class="row"><div class="opt active" id="c_war" onclick="setC('warrior')">⚔️ Guardián</div><div class="opt" id="c_arc" onclick="setC('archer')">🏹 Explorador</div></div><div class="row"><div class="opt" id="c_mag" onclick="setC('mage')">🔮 Hechicero</div><div class="opt" id="c_pri" onclick="setC('priest')">✨ Luminari</div></div><button onclick="createChar()">GUARDAR</button><button class="secondary" onclick="closeCharCreate()">VOLVER</button></div></div>
-<div id="gameWrap"><canvas id="game"></canvas><div id="uiTop"><div><b id="pName"></b> <span id="pClass"></span> Lv<span id="pLv">1</span><br><div class="bar"><div id="hpFill" class="fill" style="background:#f44;width:100%"></div></div><div class="bar"><div id="xpFill" class="fill" style="background:#ffae33;width:10%"></div></div></div><div style="text-align:right">💰 <span id="goldTxt">0</span><br><span id="posTxt"></span><br><span id="spriteInfo"></span></div></div>
-<div id="coordHelper"><b id="cX">X: 0</b><br><b id="cY">Y: 0</b><br><button class="secondary" style="width:auto;padding:5px 10px;margin-top:6px;font-size:11px" onclick="copyCoord()">📋 COPIAR COORD</button></div>
-<div id="invBtn" onclick="toggleInv()">🎒 INV</div><div id="inv"><b>INVENTARIO</b><div id="invList"></div><button class="secondary" style="margin-top:8px" onclick="goMenu()">🏠 MENU</button></div><div id="hotbar"><div class="skill" onclick="usePotion()">💊</div><div class="skill" onclick="addRandomItem()">🎁</div><div class="skill" onclick="toggleCollisionDebug()">🧱</div></div><div id="joy"><div id="stick"></div></div><div id="msgBox"></div></div>
+<div id="gameWrap"><canvas id="game"></canvas><div id="uiTop"><div><b id="pName"></b> <span id="pClass"></span> Lv<span id="pLv">1</span><br><div class="bar"><div id="hpFill" class="fill" style="background:#f44;width:100%"></div></div><div class="bar"><div id="xpFill" class="fill" style="background:#ffae33;width:10%"></div></div></div><div style="text-align:right"><div id="invBtn" onclick="toggleInv()" style="position:relative;top:0;right:0;display:inline-block">🎒 INV</div><br><span id="spriteInfo" style="font-size:13px;color:#ffae33;font-weight:bold">cc x:0 y:0</span><br><span id="posTxt" style="display:none"></span><br>💰 <span id="goldTxt">0</span></div></div><div id="invBtn" style="display:none"></div><div id="inv"><b>INVENTARIO</b><div id="invList"></div><button class="secondary" style="margin-top:8px" onclick="goMenu()">🏠 MENU</button></div><div id="hotbar"><div class="skill" onclick="usePotion()">💊</div><div class="skill" onclick="addRandomItem()">🎁</div><div class="skill" onclick="toggleCollisionDebug()">🧱</div></div><div id="joy"><div id="stick"></div></div><div id="msgBox"></div></div>
 <script>
 let gender='m',pClass='warrior';
 const classes={warrior:{name:'Guardián',icon:'⚔️'},archer:{name:'Explorador',icon:'🏹'},mage:{name:'Hechicero',icon:'🔮'},priest:{name:'Luminari',icon:'✨'}};
@@ -63,11 +59,11 @@ const TILE=32, MAP_W=80, MAP_H=80;
 let nezhalMapImg=new Image(), nezhalMapLoaded=false;
 let mapAttempts=['./nezhal.png','./nerzhal.png','./Nezhal.png','./Nerzhal.png','./map.png'];
 let mapIdx=0;
-nezhalMapImg.onload=()=>{nezhalMapLoaded=true;buildCollision();document.getElementById('spriteInfo').innerText='Mapa OK';};
+nezhalMapImg.onload=()=>{nezhalMapLoaded=true;buildCollision();document.getElementById('spriteInfo').innerText='cc x:22 y:32';};
 nezhalMapImg.onerror=()=>{
   mapIdx++;
   if(mapIdx < mapAttempts.length){nezhalMapImg.src = mapAttempts[mapIdx];}
-  else{document.getElementById('spriteInfo').innerText='Mapa no encontrado';buildCollision();}
+  else{buildCollision();}
 };
 nezhalMapImg.src=mapAttempts[0];
 
@@ -78,29 +74,21 @@ function toggleCollisionDebug(){showCollision=!showCollision;showMsg(showCollisi
 
 function buildCollision(){
   for(let y=0;y<MAP_H;y++){COLLISION_MAP[y]=[];for(let x=0;x<MAP_W;x++)COLLISION_MAP[y][x]=0;}
-  function wall(x1,y1,x2,y2){
-    for(let y=Math.min(y1,y2); y<=Math.max(y1,y2); y++){
-      for(let x=Math.min(x1,x2); x<=Math.max(x1,x2); x++){
-        if(y>=0&&y<MAP_H&&x>=0&&x<MAP_W) COLLISION_MAP[y][x]=1;
-      }
-    }
-  }
-  function free(x1,y1,x2,y2){
-    for(let y=Math.min(y1,y2); y<=Math.max(y1,y2); y++){
-      for(let x=Math.min(x1,x2); x<=Math.max(x1,x2); x++){
-        if(y>=0&&y<MAP_H&&x>=0&&x<MAP_W) COLLISION_MAP[y][x]=0;
-      }
-    }
-  }
-  // --- MANUAL ---
+  function wall(x1,y1,x2,y2){for(let y=Math.min(y1,y2); y<=Math.max(y1,y2); y++){for(let x=Math.min(x1,x2); x<=Math.max(x1,x2); x++){if(y>=0&&y<MAP_H&&x>=0&&x<MAP_W) COLLISION_MAP[y][x]=1;}}}
+  function free(x1,y1,x2,y2){for(let y=Math.min(y1,y2); y<=Math.max(y1,y2); y++){for(let x=Math.min(x1,x2); x<=Math.max(x1,x2); x++){if(y>=0&&y<MAP_H&&x>=0&&x<MAP_W) COLLISION_MAP[y][x]=0;}}}
+  
+  // BORDES EXTERIORES
   wall(0,0,79,2); wall(0,77,79,79); wall(0,0,2,79); wall(77,0,79,79);
-  // Muro izquierdo (el de tu foto, perfecto)
-  wall(20,0,23,79);
-  // Muro superior bajado 1 bloque y de esquina a esquina
-  wall(23,11,79,12);
-  // Paso abajo
+  
+  // MURO IZQUIERDO - original perfecto
+  wall(6,0,10,79);
+
+  // MURO SUPERIOR - bajado 1 y de esquina a esquina como pediste
+  wall(10,11,79,12);
+  
+  // LIBERAR SPAWN Y CAMINO DE LA CASA
+  free(20,28,24,75);
   free(34,70,45,79);
-  wall(33,74,33,79); wall(46,74,46,79);
 }
 
 const SPRITES={};
@@ -108,13 +96,7 @@ function addSprite(id,url,cols=6,rows=2){
   const img=new Image();
   const e={img,url,cols,rows,loaded:false,fw:0,fh:0,rawW:0,rawH:0};
   SPRITES[id]=e;
-  img.onload=()=>{
-    e.loaded=true;
-    e.rawW = img.width / cols;
-    e.rawH = img.height / rows;
-    e.fw = Math.floor(e.rawW - 2);
-    e.fh = Math.floor(e.rawH - 2);
-  };
+  img.onload=()=>{e.loaded=true;e.rawW=img.width/cols;e.rawH=img.height/rows;e.fw=Math.floor(e.rawW-2);e.fh=Math.floor(e.rawH-2);};
   img.src=url;
 }
 addSprite('man','./man.png',6,2);
@@ -153,12 +135,6 @@ joy.addEventListener('touchmove',e=>{let r=joy.getBoundingClientRect();let cx=r.
 joy.addEventListener('touchend',()=>{joyActive=false;joyX=0;joyY=0;stick.style.left='30px';stick.style.top='30px';});
 window.usePotion=()=>{if((player.inv.potion||0)>0&&player.hp<player.maxHp){player.inv.potion--;if(player.inv.potion<=0)delete player.inv.potion;player.hp=Math.min(player.maxHp,player.hp+50);updateInvUI();}};
 window.addRandomItem=()=>{let ids=Object.keys(ITEMS);let id=ids[Math.floor(Math.random()*ids.length)];drops.push({x:player.x+Math.random()*2,y:player.y+Math.random()*2,id,count:1,icon:ITEMS[id].icon});};
-window.copyCoord=()=>{
-  let txt = `${Math.floor(player.x)},${Math.floor(player.y)}`;
-  navigator.clipboard.writeText(txt).catch(()=>{});
-  showMsg("Coord copiada: " + txt);
-  console.log("COORD:", txt);
-};
 function canWalk(x,y){let ix=Math.floor(x),iy=Math.floor(y);if(iy<0||iy>=MAP_H||ix<0||ix>=MAP_W)return false;if(COLLISION_MAP[iy]?.[ix]===1)return false;return true;}
 function loop(){
 let dx=0,dy=0;
@@ -174,16 +150,13 @@ if(canWalk(player.x,ny))player.y=ny;
 let camX=player.x*TILE-c.width/2+TILE/2,camY=player.y*TILE-c.height/2+TILE/2;
 ctx.fillStyle='#0a1a0a';ctx.fillRect(0,0,c.width,c.height);
 if(nezhalMapLoaded){ctx.drawImage(nezhalMapImg,-camX,-camY,MAP_W*TILE,MAP_H*TILE);}
-else{ctx.fillStyle='#1a2a1a';ctx.fillRect(-camX,-camY,MAP_W*TILE,MAP_H*TILE);ctx.fillStyle='#fff';ctx.fillText('Cargando mapa...',c.width/2-50,c.height/2);}
+else{ctx.fillStyle='#1a2a1a';ctx.fillRect(-camX,-camY,MAP_W*TILE,MAP_H*TILE);}
 drops.forEach(d=>{ctx.font='22px monospace';ctx.fillText(d.icon,d.x*TILE-camX,d.y*TILE-camY);});
 if(showCollision){ctx.fillStyle='rgba(255,0,0,0.45)';for(let y=0;y<MAP_H;y++){for(let x=0;x<MAP_W;x++){if(COLLISION_MAP[y][x]===1){ctx.fillRect(x*TILE-camX,y*TILE-camY,TILE,TILE);}}}}
 let pcx=c.width/2,pcy=c.height/2;let bob=Math.sin(anim*2)*1.2;
 drawPlayer(ctx,SPRITES[player.sprite],player.dir,player.moving,anim,pcx-28,pcy-68+bob,56,84);
 let fx=Math.floor(player.x), fy=Math.floor(player.y);
-document.getElementById('posTxt').innerText=`${fx},${fy}`;
-document.getElementById('cX').innerText=`X: ${fx}`;
-document.getElementById('cY').innerText=`Y: ${fy}`;
-document.getElementById('spriteInfo').innerText=`Tile ${fx},${fy}`;
+document.getElementById('spriteInfo').innerText=`cc x:${fx} y:${fy}`;
 requestAnimationFrame(loop);
 }
 loop();checkLevel();updateInvUI();
