@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WORLD OF TERRA - BETA Yovnk</title>
+<title>WORLD OF TERRA - CAJA 1 MOTOR</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:monospace;user-select:none}
 body{background:#000;overflow:hidden;touch-action:none}
@@ -38,13 +38,14 @@ button.secondary{background:#000;border:1px solid #ffae33;color:#ffae33}
 </style>
 </head>
 <body>
-<div id="mainMenu" class="screen"><div class="card"><h1 style="color:#ffae33;text-align:center">WORLD OF TERRA</h1><p style="text-align:center;color:#aaa;font-size:11px">BETA Yovnk - 272W 41R MOVIBLE</p><div id="slotArea"></div><div class="preview"><canvas id="menuPreview" width="120" height="120"></canvas></div><button id="btnStart" onclick="startAdventure()">INICIAR PARTIDA</button><button class="secondary" onclick="openCharCreate()">CREAR PERSONAJE</button></div></div>
+<div id="mainMenu" class="screen"><div class="card"><h1 style="color:#ffae33;text-align:center">WORLD OF TERRA</h1><p style="text-align:center;color:#aaa;font-size:11px">CAJA 1 - MOTOR</p><div id="slotArea"></div><div class="preview"><canvas id="menuPreview" width="120" height="120"></canvas></div><button id="btnStart" onclick="startAdventure()">INICIAR PARTIDA</button><button class="secondary" onclick="openCharCreate()">CREAR PERSONAJE</button></div></div>
 <div id="charCreate" class="screen" style="display:none"><div class="card"><h3 style="color:#ffae33;text-align:center">CREA TU LEYENDA</h3><div class="preview"><canvas id="charCanvas" width="120" height="120"></canvas></div><input id="c_name" placeholder="Nombre" maxlength="12"><div class="label">GÉNERO</div><div class="row"><div class="opt active" id="g_m" onclick="setG('m')">♂ Hombre</div><div class="opt" id="g_f" onclick="setG('f')">♀ Mujer</div></div><div class="label">CLASE</div><div class="row"><div class="opt active" id="c_war" onclick="setC('warrior')">⚔️ Guardián</div><div class="opt" id="c_arc" onclick="setC('archer')">🏹 Explorador</div></div><div class="row"><div class="opt" id="c_mag" onclick="setC('mage')">🔮 Hechicero</div><div class="opt" id="c_pri" onclick="setC('priest')">✨ Luminari</div></div><button onclick="createChar()">GUARDAR</button><button class="secondary" onclick="closeCharCreate()">VOLVER</button></div></div>
 <div id="gameWrap"><canvas id="game"></canvas><div id="uiTop"><div><b id="pName"></b> Lv<span id="pLv">1</span><br><div class="bar"><div id="hpFill" class="fill" style="background:#f44;width:100%"></div></div><div class="bar"><div id="xpFill" class="fill" style="background:#ffae33;width:10%"></div></div></div><div style="text-align:right"><div id="invBtn" onclick="toggleInv()" style="position:relative;top:0;right:0;display:inline-block">🎒 INV</div><br><span id="spriteInfo" style="font-size:13px;color:#ffae33;font-weight:bold">cc x:0 y:0</span><br>💰 <span id="goldTxt">0</span></div></div>
-<div id="editorPanel"><div id="editorPanelHeader"><span>🔧 EDITOR</span><span>✋ ARRASTRAME</span></div><div id="editorPanelBody">Corto: 🔴/🟢 Colisión<br>Largo 1s: 🔵 TECHO<br>Arrastra esta ventana!<br><br><button class="secondary" style="font-size:11px;padding:7px" onclick="exportCustom()">📋 EXPORTAR WALL+ROOF</button><button class="secondary" style="font-size:11px;padding:7px" onclick="clearCustom()">🗑️ BORRAR TODO</button><button style="font-size:11px;padding:7px;background:#ff0;color:#000" onclick="toggleEditMode()">SALIR EDITOR</button><div id="editCount" style="margin-top:8px;color:#ff0"></div></div></div>
+<div id="editorPanel"><div id="editorPanelHeader"><span>🔧 EDITOR</span><span>✋ ARRASTRAME</span></div><div id="editorPanelBody">Corto: 🔴/🟢 Largo: 🔵<br><br><button class="secondary" style="font-size:11px;padding:7px" onclick="exportCustom()">📋 EXPORTAR</button><button class="secondary" style="font-size:11px;padding:7px" onclick="clearCustom()">🗑️ BORRAR</button><button style="font-size:11px;padding:7px;background:#ff0;color:#000" onclick="toggleEditMode()">SALIR</button><div id="editCount" style="margin-top:8px;color:#ff0"></div></div></div>
 <div id="inv"><b>INVENTARIO</b><div id="invList"></div><button class="secondary" style="margin-top:8px" onclick="goMenu()">🏠 MENU</button></div>
 <div id="hotbar"><div class="skill" onclick="usePotion()">💊</div><div class="skill" id="brickBtn">🧱</div><div class="skill" id="mapBtn">🗺️</div><div class="skill" onclick="addRandomItem()">🎁</div></div>
 <div id="joy"><div id="stick"></div></div><div id="msgBox"></div></div>
+
 <script>
 let gender='m',pClass='warrior';
 const classes={warrior:{name:'Guardián',icon:'⚔️'},archer:{name:'Explorador',icon:'🏹'},mage:{name:'Hechicero',icon:'🔮'},priest:{name:'Luminari',icon:'✨'}};
@@ -76,26 +77,27 @@ try{
   customEdits=JSON.parse(localStorage.getItem('nezhal_custom')||'{}');
   customRoofs=JSON.parse(localStorage.getItem('nezhal_roofs')||'{}');
   if(Object.keys(customRoofs).length===0){
-    ["37,51","37,50","38,50","36,50","36,51","36,52","36,49","37,49","38,49","39,49","37,48","40,49","39,50","40,50","38,51","39,51","40,51","42,52","42,51","41,49","41,50","41,51","42,49","42,50","42,35","43,35","54,39","55,39","55,38","56,48","58,48","57,48","46,36","24,47","30,37","24,36","26,37","25,36","39,40","39,39","40,40"].forEach(k=>{customRoofs[k]=1;});
+    ["37,51","37,50","38,50","36,50","36,51","36,52","36,49","37,49","38,49","39,49","37,48","40,49","39,50","40,50","38,51","39,51","40,51","42,52","42,51","41,49","41,50","41,51","42,49","42,50","42,35","43,35","54,39","55,39","55,38","56,48","58,48","57,48","46,36","24,47","30,37","24,36","26,37","25,36","39,40","39,39","40,40","20,52","21,52","30,52","31,52"].forEach(k=>{customRoofs[k]=1;});
   }
 }catch(e){}
 function toggleCollisionDebug(){showCollision=!showCollision;showMsg(showCollision?"🔴 ROJO ON":"ROJO OFF");}
-function toggleMapTop(){mapOnTop=!mapOnTop;document.getElementById('mapBtn').classList.toggle('mapOn',mapOnTop);showMsg(mapOnTop?"🗺️ MAPA TODO ARRIBA":"🗺️ MAPA ABAJO");}
-function toggleEditMode(){editMode=!editMode;document.getElementById('editorPanel').style.display=editMode?'block':'none';document.getElementById('brickBtn').classList.toggle('editOn',editMode);showCollision=true;showMsg(editMode?"🔧 EDITOR ON - ARRASTRA LA VENTANA AMARILLA":"EDITOR OFF");updateEditCount();}
+function toggleMapTop(){mapOnTop=!mapOnTop;document.getElementById('mapBtn').classList.toggle('mapOn',mapOnTop);showMsg(mapOnTop?"🗺️ MAPA ARRIBA":"🗺️ MAPA ABAJO");}
+function toggleEditMode(){editMode=!editMode;document.getElementById('editorPanel').style.display=editMode?'block':'none';document.getElementById('brickBtn').classList.toggle('editOn',editMode);showCollision=true;showMsg(editMode?"🔧 EDITOR ON":"EDITOR OFF");updateEditCount();}
 function updateEditCount(){document.getElementById('editCount').innerText=Object.keys(customEdits).length+" walls | "+Object.keys(customRoofs).length+" roofs";}
 function saveCustom(){localStorage.setItem('nezhal_custom',JSON.stringify(customEdits));localStorage.setItem('nezhal_roofs',JSON.stringify(customRoofs));}
-function clearCustom(){if(confirm("¿Borrar paredes y techos?")){customEdits={};customRoofs={};saveCustom();buildCollision();showMsg("Todo borrado");updateEditCount();}}
+function clearCustom(){if(confirm("¿Borrar?")){customEdits={};customRoofs={};saveCustom();buildCollision();showMsg("Borrado");updateEditCount();}}
 function exportCustom(){
   let w="",r="",cW=0,cR=0;
   for(let k in customEdits){let [x,y]=k.split(',');if(customEdits[k]==1){w+=`wall(${x},${y},${x},${y});\n`;cW++;}}
   for(let k in customRoofs){let [x,y]=k.split(',');r+=`roof(${x},${y},${x},${y});\n`;cR++;}
   let out=`// WALLS (${cW})\n${w}\n// ROOFS (${cR})\n${r}`;
-  navigator.clipboard.writeText(out).then(()=>showMsg(`📋 ${cW} walls + ${cR} roofs copiados`));console.log(out);alert(out);
+  navigator.clipboard.writeText(out).then(()=>showMsg(`📋 ${cW}+${cR} copiados`));console.log(out);alert(out);
 }
 function buildCollision(){
   for(let y=0;y<MAP_H;y++){COLLISION_MAP[y]=[];for(let x=0;x<MAP_W;x++)COLLISION_MAP[y][x]=0;}
-  function wall(x1,y1,x2,y2){for(let y=Math.min(y1,y2); y<=Math.max(y1,y2); y++){for(let x=Math.min(x1,x2); x<=Math.max(x1,x2); x++){if(y>=0&&y<MAP_H&&x>=0&&x<MAP_W) COLLISION_MAP[y][x]=1;}}}
-  function free(x1,y1,x2,y2){for(let y=Math.min(y1,y2); y<=Math.max(y1,y2); y++){for(let x=Math.min(x1,x2); x<=Math.max(x1,x2); x++){if(y>=0&&y<MAP_H&&x>=0&&x<MAP_W) COLLISION_MAP[y][x]=0;}}}
+  window.wall=function(x1,y1,x2,y2){for(let y=Math.min(y1,y2); y<=Math.max(y1,y2); y++){for(let x=Math.min(x1,x2); x<=Math.max(x1,x2); x++){if(y>=0&&y<MAP_H&&x>=0&&x<MAP_W) COLLISION_MAP[y][x]=1;}}}
+  window.free=function(x1,y1,x2,y2){for(let y=Math.min(y1,y2); y<=Math.max(y1,y2); y++){for(let x=Math.min(x1,x2); x<=Math.max(x1,x2); x++){if(y>=0&&y<MAP_H&&x>=0&&x<MAP_W) COLLISION_MAP[y][x]=0;}}}
+  window.roof=function(x,y){customRoofs[x+","+y]=1;}
   wall(0,0,79,2); wall(0,77,79,79); wall(0,0,2,79); wall(77,0,79,79);
   wall(6,0,10,79); wall(70,0,74,79); wall(0,71,79,79);
   wall(68,0,68,79); wall(45,13,48,13); wall(45,13,45,18); wall(35,17,43,17);
@@ -104,7 +106,8 @@ function buildCollision(){
   wall(28,0,56,13); wall(13,19,31,32); wall(48,22,67,37); wall(50,44,66,66); wall(13,42,31,55);
   wall(10,55,18,62); wall(17,60,28,63); wall(28,64,32,68); wall(10,68,35,72); wall(65,62,70,72); wall(13,27,14,29); wall(65,37,66,39);
   free(66,20,67,66); free(10,40,12,46); free(6,42,10,48); free(32,40,46,42); free(32,14,46,22); free(20,28,24,40); free(32,71,44,79);
-  wall(27,43,27,43);wall(37,51,37,51);wall(37,50,37,50);wall(37,48,37,48);wall(38,51,38,51);wall(41,51,41,51);wall(43,48,43,48);wall(43,49,43,49);wall(42,47,42,47);wall(42,48,42,48);wall(43,46,43,46);wall(42,46,42,46);wall(43,47,43,47);wall(44,45,44,45);wall(45,45,45,45);wall(46,45,46,45);wall(46,46,46,46);wall(46,47,46,47);wall(45,46,45,46);wall(45,47,45,47);wall(44,47,44,47);wall(44,46,44,46);wall(46,44,46,44);wall(47,43,47,43);wall(47,42,47,42);wall(47,41,47,41);wall(46,41,46,41);wall(46,40,46,40);wall(45,40,45,40);wall(44,39,44,39);wall(45,39,45,39);wall(44,38,44,38);wall(43,38,43,38);wall(42,38,42,38);wall(41,38,41,38);wall(41,37,41,37);wall(41,36,41,36);wall(42,37,42,37);wall(42,36,42,36);wall(43,36,43,36);wall(44,36,44,36);wall(43,37,43,37);wall(44,37,44,37);wall(45,37,45,37);wall(45,38,45,38);wall(46,37,46,37);wall(46,38,46,38);wall(46,39,46,39);wall(47,38,47,38);wall(47,39,47,39);wall(47,40,47,40);wall(48,38,48,38);wall(48,39,48,39);wall(48,40,48,40);wall(49,39,49,39);wall(49,40,49,40);wall(50,41,50,41);wall(50,40,50,40);wall(49,41,49,41);wall(48,41,48,41);wall(48,42,48,42);wall(53,40,53,40);wall(53,41,53,41);wall(54,41,54,41);wall(54,40,54,40);wall(55,40,55,40);wall(55,41,55,41);wall(56,39,56,39);wall(56,40,56,40);wall(56,41,56,41);wall(53,38,53,38);wall(54,38,54,38);wall(54,43,54,43);wall(54,42,54,42);wall(55,43,55,43);wall(55,42,55,42);wall(56,42,56,42);wall(56,43,56,43);wall(57,41,57,41);wall(57,42,57,42);wall(57,43,57,43);wall(49,48,49,48);wall(43,50,43,50);wall(44,48,44,48);wall(45,48,45,48);wall(46,48,46,48);wall(46,49,46,49);wall(45,49,45,49);wall(46,50,46,50);wall(46,51,46,51);wall(46,52,46,52);wall(47,52,47,52);wall(48,52,48,52);wall(49,52,49,52);wall(48,49,48,49);wall(59,48,59,48);wall(58,37,58,37);wall(58,39,58,39);wall(58,38,58,38);wall(59,39,59,39);wall(59,40,59,40);wall(59,41,59,41);wall(60,42,60,42);wall(60,43,60,43);wall(60,41,60,41);wall(47,35,47,35);wall(46,35,46,35);wall(46,34,46,34);wall(47,34,47,34);wall(47,33,47,33);wall(46,33,46,33);wall(45,33,45,33);wall(45,34,45,34);wall(44,33,44,33);wall(44,34,44,34);wall(43,33,43,33);wall(42,33,42,33);wall(41,33,41,33);wall(40,33,40,33);wall(39,33,39,33);wall(38,33,38,33);wall(37,33,37,33);wall(36,33,36,33);wall(35,33,35,33);wall(34,34,34,34);wall(33,34,33,34);wall(34,33,34,33);wall(33,33,33,33);wall(33,32,33,32);wall(32,32,32,32);wall(24,31,24,31);wall(24,32,24,32);wall(24,33,24,33);wall(24,34,24,34);wall(25,33,25,33);wall(25,34,25,34);wall(16,38,16,38);wall(22,34,22,34);wall(21,34,21,34);wall(21,35,21,35);wall(20,36,20,36);wall(19,37,19,37);wall(18,38,18,38);wall(19,38,19,38);wall(20,38,20,38);wall(21,38,21,38);wall(21,39,21,39);wall(22,40,22,40);wall(21,41,21,41);wall(22,39,22,39);wall(22,41,22,41);wall(23,38,23,38);wall(23,39,23,39);wall(24,39,24,39);wall(25,39,25,39);wall(26,38,26,38);wall(26,47,26,47);wall(29,47,29,47);wall(28,41,28,41);wall(29,40,29,40);wall(30,39,30,39);wall(28,40,28,40);wall(29,39,29,39);wall(29,38,29,38);wall(30,38,30,38);wall(31,38,31,38);wall(32,38,32,38);wall(31,39,31,39);wall(30,40,30,40);wall(31,41,31,41);wall(31,40,31,40);wall(32,39,32,39);wall(32,41,32,41);wall(32,42,32,42);wall(32,43,32,43);wall(32,44,32,44);wall(32,40,32,40);wall(33,40,33,40);wall(33,39,33,39);wall(34,38,34,38);wall(35,38,35,38);wall(33,37,33,37);wall(31,36,31,36);wall(30,36,30,36);wall(30,35,30,35);wall(31,35,31,35);wall(31,34,31,34);wall(32,34,32,34);wall(32,35,32,35);wall(29,35,29,35);wall(28,36,28,36);wall(29,36,29,36);wall(27,36,27,36);wall(25,37,25,37);wall(28,33,28,33);wall(26,34,26,34);wall(27,34,27,34);wall(27,35,27,35);wall(29,34,29,34);wall(34,36,34,36);wall(35,36,35,36);wall(36,36,36,36);wall(36,35,36,35);wall(37,35,37,35);wall(37,36,37,36);wall(37,37,37,37);wall(37,38,37,38);wall(36,38,36,38);wall(36,37,36,37);wall(35,37,35,37);wall(34,37,34,37);wall(33,52,33,52);wall(33,51,33,51);wall(33,50,33,50);wall(33,49,33,49);wall(33,48,33,48);wall(32,48,32,48);wall(32,49,32,49);wall(32,50,32,50);wall(32,52,32,52);wall(32,51,32,51);wall(35,51,35,51);wall(35,50,35,50);wall(35,49,35,49);wall(35,48,35,48);wall(34,48,34,48);wall(36,53,36,53);wall(36,54,36,54);wall(36,55,36,55);wall(36,57,36,57);wall(36,56,36,56);wall(35,52,35,52);wall(35,53,35,53);wall(35,55,35,55);wall(35,56,35,56);wall(35,54,35,54);wall(37,42,37,42);wall(37,41,37,41);wall(38,41,38,41);wall(37,43,37,43);wall(38,43,38,43);wall(38,44,38,44);wall(39,43,39,43);wall(40,43,40,43);wall(39,44,39,44);wall(40,44,40,44);wall(41,43,41,43);wall(42,42,42,42);wall(41,41,41,41);wall(41,42,41,42);wall(40,42,40,42);wall(39,42,39,42);wall(38,42,38,42);wall(39,41,39,41);wall(40,41,40,41);wall(43,51,43,51);wall(43,52,43,52);wall(43,53,43,53);wall(43,54,43,54);wall(43,55,43,55);wall(43,56,43,56);wall(43,57,43,57);wall(43,58,43,58);wall(36,58,36,58);wall(36,59,36,59);wall(37,59,37,59);wall(39,59,39,59);wall(38,59,38,59);wall(40,59,40,59);wall(41,59,41,59);wall(42,59,42,59);wall(43,59,43,59);
+  // ACA LA CAJA 1 LEE LA CAJA 2
+  if(typeof loadCaja2 === 'function'){loadCaja2(); console.log("✅ CAJA 2 CARGADA");}
   for(let k in customEdits){let [x,y]=k.split(',').map(Number); if(y>=0&&y<MAP_H&&x>=0&&x<MAP_W) COLLISION_MAP[y][x]=customEdits[k];}
 }
 const SPRITES={};
@@ -133,21 +136,12 @@ brickBtn.addEventListener('mouseup',()=>{if(pressTimer){clearTimeout(pressTimer)
 document.getElementById('mapBtn').addEventListener('click',toggleMapTop);
 function worldFromScreen(sx,sy){let camX=player.x*TILE-c.width/2+TILE/2,camY=player.y*TILE-c.height/2+TILE/2;return{wx:Math.floor((sx+camX)/TILE),wy:Math.floor((sy+camY)/TILE)};}
 function toggleWall(wx,wy){if(wy<0||wy>=MAP_H||wx<0||wx>=MAP_W)return;let cur=COLLISION_MAP[wy][wx]||0;let next=cur?0:1;COLLISION_MAP[wy][wx]=next;customEdits[wx+","+wy]=next;saveCustom();updateEditCount();showMsg((next?"🔴 BANEADO ":"🟢 LIBRE ")+`x:${wx} y:${wy}`);}
-function toggleRoof(wx,wy){if(wy<0||wy>=MAP_H||wx<0||wx>=MAP_W)return;let k=wx+","+wy;if(customRoofs[k]){delete customRoofs[k];showMsg(`🟦 TECHO QUITADO x:${wx} y:${wy}`);}else{customRoofs[k]=1;showMsg(`🔵 TECHO MARCADO x:${wx} y:${wy}`);}saveCustom();updateEditCount();}
+function toggleRoof(wx,wy){if(wy<0||wy>=MAP_H||wx<0||wx>=MAP_W)return;let k=wx+","+wy;if(customRoofs[k]){delete customRoofs[k];showMsg(`🟦 QUITADO x:${wx} y:${wy}`);}else{customRoofs[k]=1;showMsg(`🔵 TECHO x:${wx} y:${wy}`);}saveCustom();updateEditCount();}
 let mapPressTimer=null, mapPressPos=null;
 c.addEventListener('touchstart',e=>{if(!editMode)return;let t=e.touches[0];mapPressPos=worldFromScreen(t.clientX,t.clientY);mapPressTimer=setTimeout(()=>{toggleRoof(mapPressPos.wx,mapPressPos.wy);mapPressTimer=null;mapPressPos=null;},1000);});
-c.addEventListener('touchend',e=>{
-  if(!editMode)return;
-  if(mapPressTimer){clearTimeout(mapPressTimer); if(mapPressPos) toggleWall(mapPressPos.wx,mapPressPos.wy);}
-  mapPressTimer=null; mapPressPos=null;
-  e.preventDefault();
-},{passive:false});
+c.addEventListener('touchend',e=>{if(!editMode)return;if(mapPressTimer){clearTimeout(mapPressTimer); if(mapPressPos) toggleWall(mapPressPos.wx,mapPressPos.wy);}mapPressTimer=null;mapPressPos=null;e.preventDefault();},{passive:false});
 c.addEventListener('mousedown',e=>{if(!editMode)return;mapPressPos=worldFromScreen(e.clientX,e.clientY);mapPressTimer=setTimeout(()=>{toggleRoof(mapPressPos.wx,mapPressPos.wy);mapPressTimer=null;mapPressPos=null;},1000);});
-c.addEventListener('mouseup',e=>{
-  if(!editMode)return;
-  if(mapPressTimer){clearTimeout(mapPressTimer); if(mapPressPos) toggleWall(mapPressPos.wx,mapPressPos.wy);}
-  mapPressTimer=null; mapPressPos=null;
-});
+c.addEventListener('mouseup',e=>{if(!editMode)return;if(mapPressTimer){clearTimeout(mapPressTimer); if(mapPressPos) toggleWall(mapPressPos.wx,mapPressPos.wy);}mapPressTimer=null;mapPressPos=null;});
 c.addEventListener('contextmenu',e=>e.preventDefault());
 window.usePotion=()=>{if((player.inv.potion||0)>0&&player.hp<player.maxHp){player.inv.potion--;if(player.inv.potion<=0)delete player.inv.potion;player.hp=Math.min(player.maxHp,player.hp+50);updateInvUI();}};
 window.addRandomItem=()=>{let ids=Object.keys(ITEMS);let id=ids[Math.floor(Math.random()*ids.length)];drops.push({x:player.x+Math.random()*2,y:player.y+Math.random()*2,id,count:1,icon:ITEMS[id].icon});};
@@ -194,20 +188,10 @@ function drawDebug(){
     ctx.strokeStyle='#ffff00';ctx.lineWidth=2;ctx.setLineDash([4,4]);
     for(let k in customEdits){let [x,y]=k.split(',').map(Number);if(customEdits[k]==1)ctx.strokeRect(x*TILE-camX+1,y*TILE-camY+1,TILE-2,TILE-2);else{ctx.fillStyle='rgba(0,255,0,0.35)';ctx.fillRect(x*TILE-camX,y*TILE-camY,TILE,TILE);}}
     ctx.setLineDash([]);
-    for(let k in customRoofs){
-      let [x,y]=k.split(',').map(Number);
-      ctx.fillStyle='rgba(0,150,255,0.45)';
-      ctx.fillRect(x*TILE-camX, y*TILE-camY, TILE, TILE);
-      ctx.fillStyle='#fff';ctx.font='bold 14px monospace';ctx.fillText('🔵',x*TILE-camX+8,y*TILE-camY+20);
-    }
+    for(let k in customRoofs){let [x,y]=k.split(',').map(Number);ctx.fillStyle='rgba(0,150,255,0.45)';ctx.fillRect(x*TILE-camX, y*TILE-camY, TILE, TILE);ctx.fillStyle='#fff';ctx.font='bold 14px monospace';ctx.fillText('🔵',x*TILE-camX+8,y*TILE-camY+20);}
   }
 }
-if(!mapOnTop){
-  drawWorldBase(); drawShadow(); drawPj(); drawRoofsLayer(); drawDebug();
-} else {
-  drawShadow(); drawPj(); ctx.globalAlpha=0.68; drawWorldBase(); drawRoofsLayer(); ctx.globalAlpha=1; drawDebug();
-  ctx.fillStyle='#0ff';ctx.font='bold 11px monospace';ctx.fillText('MAPA ARRIBA DEBUG',10,70);
-}
+if(!mapOnTop){drawWorldBase();drawShadow();drawPj();drawRoofsLayer();drawDebug();}else{drawShadow();drawPj();ctx.globalAlpha=0.68;drawWorldBase();drawRoofsLayer();ctx.globalAlpha=1;drawDebug();}
 let fx=Math.floor(player.x), fy=Math.floor(player.y);
 document.getElementById('spriteInfo').innerText=`cc x:${fx} y:${fy}`;
 requestAnimationFrame(loop);
@@ -217,7 +201,6 @@ function checkLevel(){let need=player.lv*50;if(player.xp>=need){player.lv++;play
 window.updateInvUI=()=>{let list=document.getElementById('invList');list.innerHTML='';for(let id in player.inv){let count=player.inv[id];let it=getItem(id);let div=document.createElement('div');div.style.cssText='display:flex;justify-content:space-between;padding:3px;background:#111;margin:2px 0;border-radius:4px;';div.innerHTML=`<span>${it.icon} ${it.name} x${count}</span>`;list.appendChild(div);}checkLevel();saveChar({...player});renderSlot();};
 }
 renderSlot();drawPreview();drawMenuPreview();
-// EDITOR MOVIBLE
 (function(){
   let panel=document.getElementById('editorPanel');
   let header=document.getElementById('editorPanelHeader');
@@ -234,5 +217,9 @@ renderSlot();drawPreview();drawMenuPreview();
   window.addEventListener('touchend',endDrag);
 })();
 </script>
+
+<!-- CAJA 1 LEE LA CAJA 2 DESDE ARCHIVO EXTERNO -->
+<script src="./caja2.js"></script>
+
 </body>
 </html>
