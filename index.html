@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WORLD OF TERRA - FINAL LIMPIO</title>
-<script src="./caja2.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:monospace;user-select:none}
 body{background:#000;overflow:hidden;touch-action:none}
@@ -65,17 +64,25 @@ function toggleInv(){let i=document.getElementById('inv');i.style.display=i.styl
 function showMsg(t){let m=document.getElementById('msgBox');m.innerText=t;m.style.display='block';setTimeout(()=>m.style.display='none',2500);}
 const TILE=32, MAP_W=80, MAP_H=80;
 let nezhalMapImg=new Image(), nezhalMapLoaded=false;
-nezhalMapImg.onload=()=>{nezhalMapLoaded=true;buildCollision();};
-nezhalMapImg.onerror=()=>{buildCollision();};
+nezhalMapImg.onload=()=>{nezhalMapLoaded=true;};
 nezhalMapImg.src='./nezhal.png';
 const ITEMS={potion:{name:'Poción',icon:'🧪'},coin:{name:'Moneda',icon:'💰'},wood:{name:'Madera',icon:'🪵'},diamond:{name:'Diamante',icon:'💎'}};
 function getItem(id){return ITEMS[id]||{name:'???',icon:'❓'};}
-let COLLISION_MAP=[];
+
+// --- UNICO LUGAR DONDE EXISTE COLLISION_MAP ---
+window.COLLISION_MAP = [];
+let COLLISION_MAP = window.COLLISION_MAP;
+
+window.wall=function(x1,y1,x2,y2){for(let y=Math.min(y1,y2); y<=Math.max(y1,y2); y++){for(let x=Math.min(x1,x2); x<=Math.max(x1,x2); x++){if(y>=0&&y<MAP_H&&x>=0&&x<MAP_W) window.COLLISION_MAP[y][x]=1;}}}
+window.free=function(x1,y1,x2,y2){for(let y=Math.min(y1,y2); y<=Math.max(y1,y2); y++){for(let x=Math.min(x1,x2); x<=Math.max(x1,x2); x++){if(y>=0&&y<MAP_H&&x>=0&&x<MAP_W) window.COLLISION_MAP[y][x]=0;}}}
+window.roof=function(){};
+
 function buildCollision(){
-  for(let y=0;y<MAP_H;y++){COLLISION_MAP[y]=[];for(let x=0;x<MAP_W;x++)COLLISION_MAP[y][x]=0;}
-  window.wall=function(x1,y1,x2,y2){for(let y=Math.min(y1,y2); y<=Math.max(y1,y2); y++){for(let x=Math.min(x1,x2); x<=Math.max(x1,x2); x++){if(y>=0&&y<MAP_H&&x>=0&&x<MAP_W) COLLISION_MAP[y][x]=1;}}}
-  window.free=function(x1,y1,x2,y2){for(let y=Math.min(y1,y2); y<=Math.max(y1,y2); y++){for(let x=Math.min(x1,x2); x<=Math.max(x1,x2); x++){if(y>=0&&y<MAP_H&&x>=0&&x<MAP_W) COLLISION_MAP[y][x]=0;}}}
-  window.roof=function(){};
+  window.COLLISION_MAP = [];
+  for(let y=0;y<MAP_H;y++){window.COLLISION_MAP[y]=[];for(let x=0;x<MAP_W;x++)window.COLLISION_MAP[y][x]=0;}
+  COLLISION_MAP = window.COLLISION_MAP;
+
+  // Mapa base
   wall(0,0,79,2); wall(0,77,79,79); wall(0,0,2,79); wall(77,0,79,79);
   wall(6,0,10,79); wall(70,0,74,79); wall(0,71,79,79); wall(68,0,68,79);
   wall(45,13,48,13); wall(45,13,45,18); wall(35,17,43,17); wall(34,18,34,18); wall(33,13,33,18); wall(31,13,33,13); wall(30,13,30,13);
@@ -83,19 +90,12 @@ function buildCollision(){
   wall(28,0,56,13); wall(13,19,31,32); wall(48,22,67,37); wall(50,44,66,66); wall(13,42,31,55);
   wall(10,55,18,62); wall(17,60,28,63); wall(28,64,32,68); wall(10,68,35,72); wall(65,62,70,72); wall(13,27,14,29); wall(65,37,66,39);
   free(66,20,67,66); free(10,40,12,46); free(6,42,10,48); free(32,40,46,42); free(32,14,46,22); free(20,28,24,40); free(32,71,44,79);
+
+  // Aca cargamos las 352 paredes del caja2
   if(typeof loadCaja2 === 'function'){
-    console.log('[INDEX] Cargando Caja2 352W'); 
-    try{ 
-      loadCaja2(); 
-      let c=0; for(let y=0;y<MAP_H;y++) for(let x=0;x<MAP_W;x++) if(COLLISION_MAP[y][x]==1) c++;
-      console.log('[INDEX] Total paredes:', c);
-    }catch(e){ console.error(e); showMsg('Error Caja2: '+e.message); }
-  } else {
-    console.warn('[INDEX] loadCaja2 no existe aún');
-    setTimeout(()=>{ if(typeof loadCaja2==='function'){ loadCaja2(); showMsg('Caja2 cargada en reintento'); } }, 500);
+    try{ loadCaja2(); console.log('[INDEX] Caja2 352W OK'); }catch(e){ console.error(e); }
   }
 }
-setTimeout(()=>{ if(COLLISION_MAP.length===0) buildCollision(); }, 800);
 
 const SPRITES={};
 function addSprite(id,url,cols=6,rows=2){const img=new Image();const e={img,url,cols,rows,loaded:false,fw:0,fh:0,rawW:0,rawH:0};SPRITES[id]=e;img.onload=()=>{e.loaded=true;e.rawW=img.width/cols;e.rawH=img.height/rows;e.fw=Math.floor(e.rawW-2);e.fh=Math.floor(e.rawH-2);};img.src=url;}
@@ -114,7 +114,7 @@ let joy=document.getElementById('joy'),stick=document.getElementById('stick');
 joy.addEventListener('touchstart',()=>joyActive=true);
 joy.addEventListener('touchmove',e=>{let r=joy.getBoundingClientRect();let cx=r.left+50,cy=r.top+50;let dx=e.touches[0].clientX-cx,dy=e.touches[0].clientY-cy;let d=Math.hypot(dx,dy);if(d>40){dx=dx/d*40;dy=dy/d*40;}stick.style.left=(33+dx)+'px';stick.style.top=(33+dy)+'px';joyX=dx/40;joyY=dy/40;e.preventDefault();},{passive:false});
 joy.addEventListener('touchend',()=>{joyActive=false;joyX=0;joyY=0;stick.style.left='33px';stick.style.top='33px';});
-function canWalk(x,y){let ix=Math.floor(x),iy=Math.floor(y);if(iy<0||iy>=MAP_H||ix<0||ix>=MAP_W)return false;if(COLLISION_MAP[iy]?.[ix]===1)return false;return true;}
+function canWalk(x,y){let ix=Math.floor(x),iy=Math.floor(y);if(iy<0||iy>=MAP_H||ix<0||ix>=MAP_W)return false;if(window.COLLISION_MAP[iy]?.[ix]===1)return false;return true;}
 setInterval(()=>{if(player){let s=getSavedChar();if(s){s.x=player.x;s.y=player.y;saveChar(s);}}},2000);
 function loop(){
 let dx=0,dy=0;
@@ -143,6 +143,17 @@ function checkLevel(){let need=player.lv*50;if(player.xp>=need){player.lv++;play
 window.updateInvUI=()=>{let list=document.getElementById('invList');list.innerHTML='';for(let id in player.inv){let count=player.inv[id];let it=ITEMS[id]||{name:'???',icon:'❓'};let div=document.createElement('div');div.style.cssText='display:flex;justify-content:space-between;padding:3px;background:#111;margin:2px 0;border-radius:4px;';div.innerHTML=`<span>${it.icon} ${it.name} x${count}</span>`;list.appendChild(div);}checkLevel();};
 }
 renderSlot();drawPreview();drawMenuPreview();
+</script>
+<!-- CAJA2 SE CARGA AL FINAL, DESPUES DE QUE wall EXISTE -->
+<script src="./caja2.js?v=5"></script>
+<script>
+// Una vez que caja2.js cargo, construimos colision
+buildCollision();
+setTimeout(()=>{ 
+  if(window.COLLISION_MAP[48] && window.COLLISION_MAP[48][37] !== 1){
+    buildCollision();
+  }
+}, 600);
 </script>
 </body>
 </html>
