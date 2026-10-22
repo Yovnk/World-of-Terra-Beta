@@ -1,21 +1,24 @@
-console.log('[Caja2] V4 autosuficiente cargado');
+console.log('[Caja2] V4.1 fix let/var cargado');
 
-// --- FIX: Si el index aun no creó nada, lo creamos aca mismo para que no falle ---
-if(typeof COLLISION_MAP === 'undefined' || !COLLISION_MAP.length){
-  console.log('[Caja2] COLLISION_MAP no existia, creandolo');
-  var COLLISION_MAP = [];
-  for(let y=0;y<80;y++){COLLISION_MAP[y]=[];for(let x=0;x<80;x++)COLLISION_MAP[y][x]=0;}
+// --- FIX SIN REDECLARAR ---
+if(typeof window.COLLISION_MAP === 'undefined' || !window.COLLISION_MAP.length){
+  window.COLLISION_MAP = [];
+  for(let y=0;y<80;y++){window.COLLISION_MAP[y]=[];for(let x=0;x<80;x++)window.COLLISION_MAP[y][x]=0;}
+}
+if(typeof COLLISION_MAP === 'undefined'){
+  var COLLISION_MAP = window.COLLISION_MAP;
 }
 if(typeof window.wall !== 'function'){
-  console.log('[Caja2] wall() no existia, creandolo');
-  window.wall=function(x1,y1,x2,y2){for(let y=Math.min(y1,y2); y<=Math.max(y1,y2); y++){for(let x=Math.min(x1,x2); x<=Math.max(x1,x2); x++){if(y>=0&&y<80&&x>=0&&x<80) COLLISION_MAP[y][x]=1;}}}
+  window.wall=function(x1,y1,x2,y2){for(let y=Math.min(y1,y2); y<=Math.max(y1,y2); y++){for(let x=Math.min(x1,x2); x<=Math.max(x1,x2); x++){if(y>=0&&y<80&&x>=0&&x<80) window.COLLISION_MAP[y][x]=1;}}}
 }
 if(typeof window.free !== 'function'){
-  window.free=function(x1,y1,x2,y2){for(let y=Math.min(y1,y2); y<=Math.max(y1,y2); y++){for(let x=Math.min(x1,x2); x<=Math.max(x1,x2); x++){if(y>=0&&y<80&&x>=0&&x<80) COLLISION_MAP[y][x]=0;}}}
+  window.free=function(x1,y1,x2,y2){for(let y=Math.min(y1,y2); y<=Math.max(y1,y2); y++){for(let x=Math.min(x1,x2); x<=Math.max(x1,x2); x++){if(y>=0&&y<80&&x>=0&&x<80) window.COLLISION_MAP[y][x]=0;}}}
 }
 if(typeof window.roof !== 'function'){ window.roof=function(){}; }
+if(typeof wall === 'undefined'){ var wall = window.wall; }
+if(typeof free === 'undefined'){ var free = window.free; }
+if(typeof roof === 'undefined'){ var roof = window.roof; }
 
-// --- TU FUNCION ORIGINAL ---
 function loadCaja2(){
   if(typeof showMsg === 'function') showMsg('Caja2: 352 paredes cargadas!');
   console.log('[Caja2] Aplicando 352W');
@@ -23,22 +26,15 @@ wall(27,43,27,43);wall(26,46,26,46);wall(37,48,37,48);wall(43,48,43,48);wall(43,
   roof(37,51,37,51);roof(37,50,37,50);roof(38,50,38,50);roof(36,50,36,50);roof(36,51,36,51);roof(36,52,36,52);roof(36,49,36,49);roof(37,49,37,49);roof(38,49,38,49);roof(39,49,39,49);roof(40,49,40,49);roof(39,50,39,50);roof(40,50,40,50);roof(38,51,38,51);roof(39,51,39,51);roof(40,51,40,51);roof(42,52,42,52);roof(42,51,42,51);roof(41,49,41,49);roof(41,50,41,50);roof(41,51,41,51);roof(42,49,42,49);roof(42,50,42,50);roof(42,35,42,35);roof(43,35,43,35);roof(54,39,54,39);roof(55,39,55,39);roof(55,38,55,38);roof(56,48,56,48);roof(58,48,58,48);roof(57,48,57,48);roof(46,36,46,36);roof(24,47,24,47);roof(30,37,30,37);roof(24,36,24,36);roof(26,37,26,37);roof(25,36,25,36);roof(39,40,39,40);roof(39,39,39,39);roof(40,40,40,40);roof(20,52,20,52);roof(21,52,21,52);roof(30,52,30,52);roof(31,52,31,52);roof(35,49,35,49);roof(33,51,33,51);roof(34,51,34,51);roof(35,51,35,51);roof(35,50,35,50);roof(34,49,34,49);roof(34,50,34,50);roof(33,50,33,50);roof(32,50,32,50);roof(34,52,34,52);roof(35,52,35,52);roof(43,49,43,49);roof(43,48,43,48);roof(42,48,42,48);roof(44,48,44,48);roof(43,51,43,51);roof(44,51,44,51);roof(45,51,45,51);roof(46,51,46,51);roof(44,49,44,49);roof(45,49,45,49);roof(45,50,45,50);roof(43,50,43,50);roof(46,50,46,50);roof(44,50,44,50);roof(50,50,50,50);roof(46,49,46,49);roof(50,49,50,49);roof(51,48,51,48);roof(52,48,52,48);roof(53,48,53,48);roof(57,49,57,49);roof(56,49,56,49);roof(33,49,33,49);roof(32,49,32,49);roof(32,51,32,51);roof(43,34,43,34);roof(42,34,42,34);roof(42,36,42,36);roof(41,36,41,36);roof(43,36,43,36);roof(44,36,44,36);roof(44,35,44,35);roof(47,38,47,38);roof(46,37,46,37);roof(45,37,45,37);roof(48,38,48,38);roof(48,37,48,37);roof(49,39,49,39);roof(50,40,50,40);
   console.log('[Caja2] OK');
 }
-
-// --- AUTO-APLICAR SIEMPRE ---
-try{ loadCaja2(); }catch(e){ console.log('[Caja2] error primer intento', e); }
-
-// Vigilante por si el index borra el mapa despues
+try{ loadCaja2(); }catch(e){ console.log(e); }
 let intentosCaja2=0;
 let vigilanteCaja2 = setInterval(()=>{
   intentosCaja2++;
-  if(typeof COLLISION_MAP !== 'undefined' && COLLISION_MAP[48] && COLLISION_MAP[48][37] !== 1){
-    console.log('[Caja2] Vigilante detectó mapa borrado, reaplicando');
+  if(window.COLLISION_MAP[48] && window.COLLISION_MAP[48][37] !== 1){
     try{ loadCaja2(); }catch(e){}
   }
   if(intentosCaja2>20) clearInterval(vigilanteCaja2);
 }, 600);
-
-// Loader cajas.js
 (function(){
   try {
     var s = document.createElement('script');
