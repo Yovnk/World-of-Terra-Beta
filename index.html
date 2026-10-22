@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WORLD OF TERRA - FINAL LIMPIO</title>
+<title>WORLD OF TERRA - FINAL V7</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:monospace;user-select:none}
 body{background:#000;overflow:hidden;touch-action:none}
@@ -31,12 +31,11 @@ button.secondary{background:#000;border:1px solid #ffae33;color:#ffae33}
 </style>
 </head>
 <body>
-<div id="mainMenu" class="screen"><div class="card"><h1 style="color:#ffae33;text-align:center">WORLD OF TERRA</h1><p style="text-align:center;color:#aaa;font-size:11px">SPAWN 34,42 - FINAL</p><div id="slotArea"></div><div class="preview"><canvas id="menuPreview" width="120" height="120"></canvas></div><button id="btnStart" onclick="startAdventure()">INICIAR PARTIDA</button><button class="secondary" onclick="openCharCreate()">CREAR PERSONAJE</button></div></div>
+<div id="mainMenu" class="screen"><div class="card"><h1 style="color:#ffae33;text-align:center">WORLD OF TERRA</h1><p style="text-align:center;color:#aaa;font-size:11px">SPAWN 34,42 - 464W + 94 ROOF</p><div id="slotArea"></div><div class="preview"><canvas id="menuPreview" width="120" height="120"></canvas></div><button id="btnStart" onclick="startAdventure()">INICIAR PARTIDA</button><button class="secondary" onclick="openCharCreate()">CREAR PERSONAJE</button></div></div>
 <div id="charCreate" class="screen" style="display:none"><div class="card"><h3 style="color:#ffae33;text-align:center">CREA TU LEYENDA</h3><div class="preview"><canvas id="charCanvas" width="120" height="120"></canvas></div><input id="c_name" placeholder="Nombre" maxlength="12"><div class="label">GÉNERO</div><div class="row"><div class="opt active" id="g_m" onclick="setG('m')">♂ Hombre</div><div class="opt" id="g_f" onclick="setG('f')">♀ Mujer</div></div><div class="label">CLASE</div><div class="row"><div class="opt active" id="c_war" onclick="setC('warrior')">⚔️ Guardián</div><div class="opt" id="c_arc" onclick="setC('archer')">🏹 Explorador</div></div><div class="row"><div class="opt" id="c_mag" onclick="setC('mage')">🔮 Hechicero</div><div class="opt" id="c_pri" onclick="setC('priest')">✨ Luminari</div></div><button onclick="createChar()">GUARDAR</button><button class="secondary" onclick="closeCharCreate()">VOLVER</button></div></div>
 <div id="gameWrap"><canvas id="game"></canvas><div id="uiTop"><div><b id="pName"></b> Lv<span id="pLv">1</span><br><div class="bar"><div id="hpFill" class="fill" style="background:#f44;width:100%"></div></div><div class="bar"><div id="xpFill" class="fill" style="background:#ffae33;width:10%"></div></div></div><div style="text-align:right"><div id="invBtn" onclick="toggleInv()" style="position:relative;top:0;right:0;display:inline-block">🎒 INV</div><br><span id="spriteInfo" style="font-size:13px;color:#ffae33;font-weight:bold">cc x:0 y:0</span><br>💰 <span id="goldTxt">0</span></div></div>
 <div id="inv"><b>INVENTARIO</b><div id="invList"></div><button class="secondary" style="margin-top:8px" onclick="goMenu()">🏠 MENU</button></div>
 <div id="joy"><div id="stick"></div></div><div id="msgBox"></div></div>
-
 <script>
 let gender='m',pClass='warrior';
 const classes={warrior:{name:'Guardián',icon:'⚔️'},archer:{name:'Explorador',icon:'🏹'},mage:{name:'Hechicero',icon:'🔮'},priest:{name:'Luminari',icon:'✨'}};
@@ -50,16 +49,9 @@ function drawMenuPreview(){let cv=document.getElementById('menuPreview');if(!cv)
 function renderSlot(){let area=document.getElementById('slotArea');let ch=getSavedChar();if(!ch){area.innerHTML=`<div class="slot"><div>❓</div><div><b>Slot Vacío</b></div></div>`;document.getElementById('btnStart').disabled=true;}else{area.innerHTML=`<div class="slot hasChar"><div>${classes[ch.pClass].icon}</div><div><b>${ch.name}</b> [${Math.floor(ch.x)},${Math.floor(ch.y)}]</div></div>`;document.getElementById('btnStart').disabled=false;}}
 function openCharCreate(){mainMenu.style.display='none';charCreate.style.display='flex';drawPreview();let ch=getSavedChar();if(ch){c_name.value=ch.name;gender=ch.gender;pClass=ch.pClass;setG(gender);setC(pClass);}}
 function closeCharCreate(){charCreate.style.display='none';mainMenu.style.display='flex';drawMenuPreview();}
-function createChar(){
-  let n=c_name.value.trim();if(n.length<2){alert('Nombre corto');return;}
-  let ch={name:n,gender,pClass,x:34,y:42,lv:1,xp:0,gold:0,hp:140,maxHp:140,atk:16,def:14,inv:{potion:3}};
-  saveChar(ch);closeCharCreate();
-}
+function createChar(){let n=c_name.value.trim();if(n.length<2){alert('Nombre corto');return;}let ch={name:n,gender,pClass,x:34,y:42,lv:1,xp:0,gold:0,hp:140,maxHp:140,atk:16,def:14,inv:{potion:3}};saveChar(ch);closeCharCreate();}
 function startAdventure(){let ch=getSavedChar();if(!ch){openCharCreate();return;}mainMenu.style.display='none';gameWrap.style.display='block';pName.innerText=ch.name;startGame(ch);}
-function goMenu(){
-  if(player){let s=getSavedChar();if(s){s.x=player.x;s.y=player.y;s.lv=player.lv;s.xp=player.xp;s.gold=player.gold;s.inv=player.inv;saveChar(s);}}
-  gameWrap.style.display='none';mainMenu.style.display='flex';drawMenuPreview();
-}
+function goMenu(){if(player){let s=getSavedChar();if(s){s.x=player.x;s.y=player.y;s.lv=player.lv;s.xp=player.xp;s.gold=player.gold;s.inv=player.inv;saveChar(s);}}gameWrap.style.display='none';mainMenu.style.display='flex';drawMenuPreview();}
 function toggleInv(){let i=document.getElementById('inv');i.style.display=i.style.display==='block'?'none':'block';updateInvUI();}
 function showMsg(t){let m=document.getElementById('msgBox');m.innerText=t;m.style.display='block';setTimeout(()=>m.style.display='none',2500);}
 const TILE=32, MAP_W=80, MAP_H=80;
@@ -69,20 +61,24 @@ nezhalMapImg.src='./nezhal.png';
 const ITEMS={potion:{name:'Poción',icon:'🧪'},coin:{name:'Moneda',icon:'💰'},wood:{name:'Madera',icon:'🪵'},diamond:{name:'Diamante',icon:'💎'}};
 function getItem(id){return ITEMS[id]||{name:'???',icon:'❓'};}
 
-// --- UNICO LUGAR DONDE EXISTE COLLISION_MAP ---
+// --- SISTEMA LIMPIO V7 ---
 window.COLLISION_MAP = [];
+window.ROOF_MAP = [];
 let COLLISION_MAP = window.COLLISION_MAP;
+let ROOF_MAP = window.ROOF_MAP;
 
 window.wall=function(x1,y1,x2,y2){for(let y=Math.min(y1,y2); y<=Math.max(y1,y2); y++){for(let x=Math.min(x1,x2); x<=Math.max(x1,x2); x++){if(y>=0&&y<MAP_H&&x>=0&&x<MAP_W) window.COLLISION_MAP[y][x]=1;}}}
-window.free=function(x1,y1,x2,y2){for(let y=Math.min(y1,y2); y<=Math.max(y1,y2); y++){for(let x=Math.min(x1,x2); x<=Math.max(x1,x2); x++){if(y>=0&&y<MAP_H&&x>=0&&x<MAP_W) window.COLLISION_MAP[y][x]=0;}}}
-window.roof=function(){};
+window.free=function(x1,y1,x2,y2){for(let y=Math.min(y1,y2); y<=Math.max(y1,y2); y++){for(let x=Math.min(x1,x2); x<=Math.max(x1,x2); x++){if(y>=0&&y<MAP_H&&x>=0&&x<MAP_W){window.COLLISION_MAP[y][x]=0; window.ROOF_MAP[y][x]=0;}}}}
+window.roof=function(x1,y1,x2,y2){for(let y=Math.min(y1,y2); y<=Math.max(y1,y2); y++){for(let x=Math.min(x1,x2); x<=Math.max(x1,x2); x++){if(y>=0&&y<MAP_H&&x>=0&&x<MAP_W) window.ROOF_MAP[y][x]=1;}}}
 
 function buildCollision(){
   window.COLLISION_MAP = [];
-  for(let y=0;y<MAP_H;y++){window.COLLISION_MAP[y]=[];for(let x=0;x<MAP_W;x++)window.COLLISION_MAP[y][x]=0;}
+  window.ROOF_MAP = [];
+  for(let y=0;y<MAP_H;y++){window.COLLISION_MAP[y]=[]; window.ROOF_MAP[y]=[]; for(let x=0;x<MAP_W;x++){window.COLLISION_MAP[y][x]=0; window.ROOF_MAP[y][x]=0;}}
   COLLISION_MAP = window.COLLISION_MAP;
+  ROOF_MAP = window.ROOF_MAP;
 
-  // Mapa base
+  // PAREDES BASE - las que tenias en el index (34 que me pasaste, aca tenes que pegar las 112 si tenes backup)
   wall(0,0,79,2); wall(0,77,79,79); wall(0,0,2,79); wall(77,0,79,79);
   wall(6,0,10,79); wall(70,0,74,79); wall(0,71,79,79); wall(68,0,68,79);
   wall(45,13,48,13); wall(45,13,45,18); wall(35,17,43,17); wall(34,18,34,18); wall(33,13,33,18); wall(31,13,33,13); wall(30,13,30,13);
@@ -91,9 +87,12 @@ function buildCollision(){
   wall(10,55,18,62); wall(17,60,28,63); wall(28,64,32,68); wall(10,68,35,72); wall(65,62,70,72); wall(13,27,14,29); wall(65,37,66,39);
   free(66,20,67,66); free(10,40,12,46); free(6,42,10,48); free(32,40,46,42); free(32,14,46,22); free(20,28,24,40); free(32,71,44,79);
 
-  // Aca cargamos las 352 paredes del caja2
   if(typeof loadCaja2 === 'function'){
-    try{ loadCaja2(); console.log('[INDEX] Caja2 352W OK'); }catch(e){ console.error(e); }
+    try{ loadCaja2(); 
+      let cw=0, cr=0; for(let y=0;y<MAP_H;y++) for(let x=0;x<MAP_W;x++){if(COLLISION_MAP[y][x]==1) cw++; if(ROOF_MAP[y][x]==1) cr++;}
+      console.log('[INDEX V7] Paredes totales:', cw, 'Roofs:', cr);
+      showMsg('Mapa: '+cw+' paredes + '+cr+' techos');
+    }catch(e){ console.error(e); }
   }
 }
 
@@ -134,6 +133,16 @@ if(nezhalMapLoaded) ctx.drawImage(nezhalMapImg,-camX,-camY,MAP_W*TILE,MAP_H*TILE
 else{ctx.fillStyle='#1a2a1a';ctx.fillRect(-camX,-camY,MAP_W*TILE,MAP_H*TILE);}
 ctx.fillStyle='rgba(0,0,0,0.45)';ctx.beginPath();ctx.ellipse(pcx,pcy+32,14,6,0,0,Math.PI*2);ctx.fill();
 drawPlayer(ctx,SPRITES[player.sprite],player.dir,player.moving,anim,pcx-24,pcy-60+bob,48,72);
+
+// ROOF ENCIMA DEL SPRITE
+let rx=Math.floor(player.x), ry=Math.floor(player.y);
+if(window.ROOF_MAP[ry]?.[rx]===1){
+  ctx.fillStyle='rgba(0,0,0,0.35)';
+  ctx.fillRect(pcx-32, pcy-80, 64, 32);
+  ctx.strokeStyle='rgba(255,174,51,0.4)';
+  ctx.strokeRect(pcx-32, pcy-80, 64, 32);
+}
+
 let fx=Math.floor(player.x), fy=Math.floor(player.y);
 document.getElementById('spriteInfo').innerText=`cc x:${fx} y:${fy}`;
 requestAnimationFrame(loop);
@@ -144,16 +153,9 @@ window.updateInvUI=()=>{let list=document.getElementById('invList');list.innerHT
 }
 renderSlot();drawPreview();drawMenuPreview();
 </script>
-<!-- CAJA2 SE CARGA AL FINAL, DESPUES DE QUE wall EXISTE -->
-<script src="./caja2.js?v=5"></script>
+<script src="./caja2.js?v=7"></script>
 <script>
-// Una vez que caja2.js cargo, construimos colision
 buildCollision();
-setTimeout(()=>{ 
-  if(window.COLLISION_MAP[48] && window.COLLISION_MAP[48][37] !== 1){
-    buildCollision();
-  }
-}, 600);
 </script>
 </body>
 </html>
