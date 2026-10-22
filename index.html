@@ -62,7 +62,7 @@ function goMenu(){
   gameWrap.style.display='none';mainMenu.style.display='flex';drawMenuPreview();
 }
 function toggleInv(){let i=document.getElementById('inv');i.style.display=i.style.display==='block'?'none':'block';updateInvUI();}
-function showMsg(t){let m=document.getElementById('msgBox');m.innerText=t;m.style.display='block';setTimeout(()=>m.style.display='none',2000);}
+function showMsg(t){let m=document.getElementById('msgBox');m.innerText=t;m.style.display='block';setTimeout(()=>m.style.display='none',2500);}
 const TILE=32, MAP_W=80, MAP_H=80;
 let nezhalMapImg=new Image(), nezhalMapLoaded=false;
 nezhalMapImg.onload=()=>{nezhalMapLoaded=true;buildCollision();};
@@ -83,8 +83,20 @@ function buildCollision(){
   wall(28,0,56,13); wall(13,19,31,32); wall(48,22,67,37); wall(50,44,66,66); wall(13,42,31,55);
   wall(10,55,18,62); wall(17,60,28,63); wall(28,64,32,68); wall(10,68,35,72); wall(65,62,70,72); wall(13,27,14,29); wall(65,37,66,39);
   free(66,20,67,66); free(10,40,12,46); free(6,42,10,48); free(32,40,46,42); free(32,14,46,22); free(20,28,24,40); free(32,71,44,79);
-  if(typeof loadCaja2 === 'function'){console.log('[INDEX] Cargando Caja2 352W'); loadCaja2();} else {console.error('[INDEX] loadCaja2 no existe');}
+  if(typeof loadCaja2 === 'function'){
+    console.log('[INDEX] Cargando Caja2 352W'); 
+    try{ 
+      loadCaja2(); 
+      let c=0; for(let y=0;y<MAP_H;y++) for(let x=0;x<MAP_W;x++) if(COLLISION_MAP[y][x]==1) c++;
+      console.log('[INDEX] Total paredes:', c);
+    }catch(e){ console.error(e); showMsg('Error Caja2: '+e.message); }
+  } else {
+    console.warn('[INDEX] loadCaja2 no existe aún');
+    setTimeout(()=>{ if(typeof loadCaja2==='function'){ loadCaja2(); showMsg('Caja2 cargada en reintento'); } }, 500);
+  }
 }
+setTimeout(()=>{ if(COLLISION_MAP.length===0) buildCollision(); }, 800);
+
 const SPRITES={};
 function addSprite(id,url,cols=6,rows=2){const img=new Image();const e={img,url,cols,rows,loaded:false,fw:0,fh:0,rawW:0,rawH:0};SPRITES[id]=e;img.onload=()=>{e.loaded=true;e.rawW=img.width/cols;e.rawH=img.height/rows;e.fw=Math.floor(e.rawW-2);e.fh=Math.floor(e.rawH-2);};img.src=url;}
 addSprite('man','./man.png',6,2);
@@ -95,7 +107,7 @@ let player,keys={},joyX=0,joyY=0,joyActive=false,anim=0;
 function startGame(charData){
 let c=document.getElementById('game'),ctx=c.getContext('2d');
 function resize(){c.width=innerWidth;c.height=innerHeight;}resize();addEventListener('resize',resize);
-player={...charData,x:charData.x||34,y:charData.y||42,dir:0,moving:false,sprite:charData.gender==='m'?'man':'women'};
+player={...charData,x:charData.x||34,y:34,dir:0,moving:false,sprite:charData.gender==='m'?'man':'women'};
 addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;});
 addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
 let joy=document.getElementById('joy'),stick=document.getElementById('stick');
